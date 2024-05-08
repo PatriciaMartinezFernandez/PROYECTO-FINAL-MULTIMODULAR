@@ -34,10 +34,10 @@ Realizar un programa que permita la gestión de entrenadores pokémon y de sus e
 - Se debe actualizar el entrenador con su mochila.
 
 ## Modelo conceptual
-![Modelo conceptual pkmnTrainers](C:\Users\Usuario\Desktop\PkmnTrainers\BD\modelo_conceptual.png)
+![Modelo conceptual pkmnTrainers](PkmnTrainers\BD\modelo_conceptual.png)
 
 ## Modelo lógico
-![Modelo lógico pkmnTrainers](C:\Users\Usuario\Desktop\PkmnTrainers\BD\modelo_logico.png)
+![Modelo lógico pkmnTrainers](PkmnTrainers\BD\modelo_logico.png)
 
 Entrenador(**idEntrenador**, nombreEntrenador, fechaCreacion)
 Equipo(**idEquipo**, __idEntrenador__)

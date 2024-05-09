@@ -69,7 +69,7 @@ insert into Medalla(idMedalla, nombre, ciudad, lider) values
 (3, 'Medalla Trueno', 'Ciudad Carmín', 'Lt Surge'),
 (4, 'Medalla Arcoiris', 'Ciudad Azulona', 'Erika'),
 (5, 'Medalla Alma', 'Ciudad Fucsia', 'Koga'),
-(6, 'Medalla Pantáno' 'Ciudad Azafrán', 'Sabrina'),
+(6, 'Medalla Pantáno', 'Ciudad Azafrán', 'Sabrina'),
 (7, 'Medalla Volcán', 'Isla Canela', 'Blaine'),
 (8, 'Medalla Tierra', 'Ciudad Verde', 'Giovanni');
 
@@ -93,3 +93,6 @@ insert into Pokemon(idPokemon, nombrePokemon, altura, peso, descripcion, popular
 (16, 'Pidgey', 0.3, 1.8, 'Su docilidad es tal que suelen defenderse levantando arena en lugar de contraatacar.', 119, 'Normal', 'Volador'),
 (17, 'Pidgeotto', 1.1, 30.0, 'Su extraordinaria vitalidad y resistencia le permiten cubrir grandes distancias del territorio que habita en busca de presas.', 117, 'Normal', 'Volador'),
 (18, 'Pidgeot', 1.5, 39.5, 'Este Pokémon vuela a una velocidad de 2 mach en busca de presas. Sus grandes garras son armas muy peligrosas.', 73, 'Normal', 'Volador');
+
+select * from Entrenador;
+delete from Entrenador where id = 1;

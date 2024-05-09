@@ -5,6 +5,8 @@ import java.util.ArrayList;
 
 public class Entrenador {
 
+	private static int contador = 0;
+	
 	private int idEntrenador;
 	private String nombreEntrenador;
 	private LocalDate fechaCreacion;
@@ -14,6 +16,15 @@ public class Entrenador {
 
 	public Entrenador() {
 		this.fechaCreacion = LocalDate.now();
+	}
+	
+	public Entrenador(String nombreEntrenador) {
+		this.idEntrenador = ++contador;
+		this.nombreEntrenador = nombreEntrenador;
+		this.fechaCreacion = LocalDate.now();
+		this.equipo = new ArrayList<Pokemon>(6);
+		this.mochila = new ArrayList<Objeto>();
+		this.estuche = new ArrayList<Medalla>(8);
 	}
 
 	public int getIdEntrenador() {
@@ -66,9 +77,9 @@ public class Entrenador {
 
 	@Override
 	public String toString() {
-		return "Entrenador [idEntrenador=" + idEntrenador + ", nombreEntrenador=" + nombreEntrenador
-				+ ", fechaCreacion=" + fechaCreacion + ", equipo=" + equipo + ", mochila=" + mochila + ", estuche="
-				+ estuche + "]";
+		return 	"=========================================================\n" + 
+				this.idEntrenador + "º | " + this.nombreEntrenador + "  " + this.estuche + "\n" + this.equipo + "\nMochila: " + mochila.size() +
+				"\n=========================================================";
 	}
 
 }

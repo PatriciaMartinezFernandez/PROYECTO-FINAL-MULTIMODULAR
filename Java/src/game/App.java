@@ -50,6 +50,9 @@ public class App {
 				eliminarEntrenador();
 				break;
 
+			case "3":
+				modificarEntrenador();
+
 			}
 
 		} while (!opcion.toLowerCase().equals("x"));
@@ -82,6 +85,27 @@ public class App {
 
 			GestionEntrenadores.eliminarEntrenadorPorID(id);
 		}
+	}
+
+	public static void modificarEntrenador() {
+		int id;
+
+		if (GestionEntrenadores.entrenadores.size() == 0) {
+			System.out.println("No hay entrenadores");
+		} else {
+			System.out.print("Introduce el id del entrenador a modificar: ");
+			id = sc.nextInt();
+			sc.nextLine();
+
+			Entrenador entrenador = GestionEntrenadores.buscarEntrenadorPorID(id);
+
+			if (entrenador != null) {
+				GestionEntrenadores.modificarEntrenador(entrenador);
+			} else {
+				System.out.println("No se encontró ningún entrenador con el ID especificado.");
+			}
+		}
+
 	}
 
 }

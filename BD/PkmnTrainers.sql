@@ -95,4 +95,3 @@ insert into Pokemon(idPokemon, nombrePokemon, altura, peso, descripcion, popular
 (18, 'Pidgeot', 1.5, 39.5, 'Este Pokémon vuela a una velocidad de 2 mach en busca de presas. Sus grandes garras son armas muy peligrosas.', 73, 'Normal', 'Volador');
 
 select * from Entrenador;
-delete from Entrenador where id = 1;

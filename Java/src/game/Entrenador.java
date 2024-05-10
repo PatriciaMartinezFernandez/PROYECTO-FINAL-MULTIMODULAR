@@ -5,6 +5,9 @@ import java.util.ArrayList;
 
 public class Entrenador {
 
+	public static final String AMARILLO = "\u001B[33m";
+	public static final String RESET = "\u001B[0m";
+	
 	private static int contador = 0;
 	
 	private int idEntrenador;
@@ -77,9 +80,16 @@ public class Entrenador {
 
 	@Override
 	public String toString() {
-		return 	"=========================================================\n" + 
-				this.idEntrenador + "º | " + this.nombreEntrenador + "  " + this.estuche + "\n" + this.equipo + "\nMochila: " + mochila.size() +
-				"\n=========================================================";
+		return 	"\n====" + AMARILLO + " FICHA ENTRENDOR " + RESET + "===================== Nº ID/" + this.idEntrenador + " ======\n" + 
+				"\n• NOMBRE / " + this.nombreEntrenador + "\n" + 
+				"---------------------------\n" +
+				"• MOCHILA:\t" + mochila.size() + " objetos\n" +
+				"• FECHA:\t" + this.fechaCreacion + "\n" +
+				"• EQUIPO:\n" + 
+				this.equipo + "\n" +
+				"• MEDALLAS:\n" +
+				this.estuche + "\n" +
+				"\n=========================================================" + RESET;
 	}
 
 }

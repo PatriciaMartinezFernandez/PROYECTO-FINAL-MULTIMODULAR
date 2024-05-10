@@ -15,24 +15,18 @@ public class App {
 
 			System.out.println("\n========= POKEMON TRAINERS =========\n");
 
-			GestionEntrenadores.imprimirEntrenadores();
-
-			System.out.println("\n====================================\n");
-
-			System.out.println("1) Registrar entrenador");
-			System.out.println("2) Eliminar entrenador");
-			System.out.println("3) Modificar entrenador");
-			System.out.println("4) Gestionar equipo");
-			System.out.println("5) Ver estuche de entrenador");
-			System.out.println("6) Ver equipo de entrenador");
-			System.out.println("7) Ver mochila de entrenador");
-			System.out.println("8) Retar gimnasio");
-			System.out.println("9) Comprar objetos");
-			System.out.println("10) Mostrar entrenadores detallado");
-			System.out.println("11) Datos pokédex");
+			System.out.println("1) Entrenadores");
+			System.out.println("2) Equipos");
+			System.out.println("3) Lista de Entrenadores");
+			System.out.println("4) Comprar Objetos");
+			System.out.println("5) Retar Gimnasio");
+			System.out.println("6) Ver Estuche");
+			System.out.println("7) Ver Equipo");
+			System.out.println("8) Ver Mochila");
+			System.out.println("9) Pokédex");
 			System.out.println("X) Salir");
 
-			System.out.println("\n====================================");
+			System.out.println("\n====================================\n");
 
 			opcion = sc.nextLine();
 
@@ -43,15 +37,84 @@ public class App {
 				break;
 
 			case "1":
-				crearEntrenador();
+
+				System.out.println("\n====================================\n");
+
+				System.out.println("1) Registrar entrenador");
+				System.out.println("2) Eliminar entrenador");
+				System.out.println("3) Modificar entrenador");
+				System.out.println("X) Salir");
+
+				System.out.println("\n====================================\n");
+
+				opcion = sc.nextLine();
+
+				switch (opcion) {
+				default:
+					System.out.println("Opción inválida, elige otra vez");
+					break;
+
+				case "1":
+					crearEntrenador();
+					break;
+
+				case "2":
+					eliminarEntrenador();
+					break;
+
+				case "3":
+					GestionEntrenadores.modificarEntrenador();
+					break;
+
+				case "X", "x":
+					opcion = "0";
+					break;
+				}
+
 				break;
 
 			case "2":
-				eliminarEntrenador();
 				break;
 
 			case "3":
-				modificarEntrenador();
+				System.out.println("\n====================================\n");
+
+				System.out.println("1) Entrenadores desordenados");
+				System.out.println("2) Entrenador específico");
+				System.out.println("3) Por cantidad de objetos");
+				System.out.println("4) Por cantidad de medallas");
+				System.out.println("5) Por número de Pokémon en equipo");
+				System.out.println("6) Por tipo de Pokémon en equipo");
+				System.out.println("7) Por popularidad del equipo");
+				System.out.println("8) Por peso total del equipo");
+				System.out.println("9) Por altura total del equipo");
+				System.out.println("X) Salir");
+
+				System.out.println("\n====================================\n");
+
+				opcion = sc.nextLine();
+
+				switch (opcion) {
+				default:
+					System.out.println("Opción inválida, elige otra vez");
+					break;
+
+				case "1":
+					GestionEntrenadores.imprimirEntrenadores();
+					break;
+
+				case "2":
+					break;
+
+				case "3":
+					break;
+
+				case "X", "x":
+					opcion = "0";
+					break;
+				}
+
+				break;
 
 			}
 
@@ -75,37 +138,11 @@ public class App {
 	public static void eliminarEntrenador() {
 		int id;
 
-		if (GestionEntrenadores.entrenadores.size() == 0) {
-			System.out.println("No hay entrenadores");
-		} else {
+		System.out.print("Introduce el id del entrenador a eliminar: ");
+		id = sc.nextInt();
+		sc.nextLine();
 
-			System.out.print("Introduce el id del entrenador a eliminar: ");
-			id = sc.nextInt();
-			sc.nextLine();
-
-			GestionEntrenadores.eliminarEntrenadorPorID(id);
-		}
-	}
-
-	public static void modificarEntrenador() {
-		int id;
-
-		if (GestionEntrenadores.entrenadores.size() == 0) {
-			System.out.println("No hay entrenadores");
-		} else {
-			System.out.print("Introduce el id del entrenador a modificar: ");
-			id = sc.nextInt();
-			sc.nextLine();
-
-			Entrenador entrenador = GestionEntrenadores.buscarEntrenadorPorID(id);
-
-			if (entrenador != null) {
-				GestionEntrenadores.modificarEntrenador(entrenador);
-			} else {
-				System.out.println("No se encontró ningún entrenador con el ID especificado.");
-			}
-		}
-
+		GestionEntrenadores.eliminarEntrenadorPorID(id);
 	}
 
 }

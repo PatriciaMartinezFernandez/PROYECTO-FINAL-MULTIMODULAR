@@ -1,7 +1,7 @@
 package game;
 
 public class Pokemon {
-	
+
 	private int idPokemon;
 	private String nombrePokemon;
 	private double altura;
@@ -10,7 +10,5 @@ public class Pokemon {
 	private int popularidad;
 	private String tipoPrimario;
 	private String tipoSecundario;
-	
-	
 
 }

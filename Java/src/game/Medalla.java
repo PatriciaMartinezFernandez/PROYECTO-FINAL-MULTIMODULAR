@@ -6,5 +6,5 @@ public class Medalla {
 	private String nombre;
 	private String ciudad;
 	private String lider;
-	
+
 }

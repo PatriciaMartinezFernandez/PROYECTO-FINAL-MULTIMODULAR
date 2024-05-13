@@ -29,46 +29,52 @@ public class GestionEntrenadores {
 	}
 
 	public static void imprimirEntrenadores() {
-		String query = "SELECT E.idEntrenador, E.nombreEntrenador, E.fechaCreacion, "
-				+ "COUNT(M.idObjeto) AS cantidadObjetos, " + "(SELECT GROUP_CONCAT(P.nombrePokemon SEPARATOR ', ') "
-				+ "FROM EquipoContienePokemons EC INNER JOIN Pokemon P ON EC.idPokemon = P.idPokemon "
-				+ "WHERE EC.idEquipo = E.idEntrenador) AS nombrePokemon, "
-				+ "(SELECT GROUP_CONCAT(MD.nombre SEPARATOR ', ') "
-				+ "FROM Estuche ES INNER JOIN Medalla MD ON ES.idMedalla = MD.idMedalla "
-				+ "WHERE ES.idEntrenador = E.idEntrenador) AS nombreMedallas "
-				+ "FROM Entrenador E LEFT JOIN Mochila M ON E.idEntrenador = M.idEntrenador "
-				+ "GROUP BY E.idEntrenador";
+	    String query = "SELECT E.idEntrenador, E.nombreEntrenador, E.fechaCreacion, " +
+	                   "COUNT(M.idObjeto) AS cantidadObjetos, " +
+	                   "(SELECT GROUP_CONCAT(P.nombrePokemon SEPARATOR ' | ') " +
+	                   "FROM EquipoContienePokemons EC " +
+	                   "INNER JOIN Pokemon P ON EC.idPokemon = P.idPokemon " +
+	                   "INNER JOIN Equipo EQ ON EC.idEquipo = EQ.idEquipo " +
+	                   "WHERE EQ.idEntrenador = E.idEntrenador) AS nombrePokemon, " +
+	                   "(SELECT GROUP_CONCAT(MD.nombre SEPARATOR ', ') " +
+	                   "FROM Estuche ES " +
+	                   "INNER JOIN Medalla MD ON ES.idMedalla = MD.idMedalla " +
+	                   "WHERE ES.idEntrenador = E.idEntrenador) AS nombreMedallas " +
+	                   "FROM Entrenador E " +
+	                   "LEFT JOIN Mochila M ON E.idEntrenador = M.idEntrenador " +
+	                   "GROUP BY E.idEntrenador";
 
-		try (PreparedStatement stmt = connection.prepareStatement(query)) {
-			ResultSet rs = stmt.executeQuery();
+	    try (PreparedStatement stmt = connection.prepareStatement(query)) {
+	        ResultSet rs = stmt.executeQuery();
 
-			if (!rs.next()) {
-				System.out.println("No hay entrenadores registrados.");
-				return;
-			}
+	        if (!rs.next()) {
+	            System.out.println("No hay entrenadores registrados.");
+	            return;
+	        }
 
-			do {
-				int idEntrenador = rs.getInt("idEntrenador");
-				String nombreEntrenador = rs.getString("nombreEntrenador");
-				Date fechaCreacion = rs.getDate("fechaCreacion");
-				int cantidadObjetos = rs.getInt("cantidadObjetos");
-				String nombrePokemon = rs.getString("nombrePokemon");
-				String nombreMedallas = rs.getString("nombreMedallas");
+	        do {
+	            int idEntrenador = rs.getInt("idEntrenador");
+	            String nombreEntrenador = rs.getString("nombreEntrenador");
+	            Date fechaCreacion = rs.getDate("fechaCreacion");
+	            int cantidadObjetos = rs.getInt("cantidadObjetos");
+	            String nombrePokemon = rs.getString("nombrePokemon");
+	            String nombreMedallas = rs.getString("nombreMedallas");
 
-				System.out.println(
-						"\n==" + AMARILLO + " FICHA ENTRENADOR " + RESET + "============= Nº ID/" + idEntrenador
-								+ " ==\n" + "\n• NOMBRE / " + nombreEntrenador + "\n" + "---------------------------\n"
-								+ "• MOCHILA:\t" + cantidadObjetos + " objetos\n" + "• FECHA:\t" + fechaCreacion + "\n"
-								+ "• EQUIPO:\n" + (nombrePokemon != null ? nombrePokemon : "") + "\n" + "• MEDALLAS:\n"
-								+ (nombreMedallas != null ? nombreMedallas : "")
-								+ "\n============================================");
+	            System.out.println(
+	                "\n==" + AMARILLO + " FICHA ENTRENADOR " + RESET + "============= Nº ID/" + idEntrenador
+	                + " ==\n" + "\n• NOMBRE / " + nombreEntrenador + "\n" + "---------------------------\n"
+	                + "• MOCHILA:\t" + cantidadObjetos + " objetos\n" + "• FECHA:\t" + fechaCreacion + "\n"
+	                + "• EQUIPO:\n  " + (nombrePokemon != null ? nombrePokemon : "") + "\n" + "• MEDALLAS:\n"
+	                + (nombreMedallas != null ? nombreMedallas : "")
+	                + "\n============================================");
 
-			} while (rs.next());
+	        } while (rs.next());
 
-		} catch (SQLException e) {
-			System.out.println(e.getMessage());
-		}
+	    } catch (SQLException e) {
+	        System.out.println(e.getMessage());
+	    }
 	}
+
 
 	public static void aniadirEntrenador(Entrenador entrenador) {
 		String query = "INSERT INTO Entrenador (nombreEntrenador, fechaCreacion) VALUES (?, NOW())";
@@ -113,13 +119,23 @@ public class GestionEntrenadores {
 				return;
 			}
 
-			System.out.print("Introduce el id del entrenador a modificar: ");
-			int id = sc.nextInt();
-			sc.nextLine();
+			System.out.println("Lista de Entrenadores:");
+			String queryEntrenadores = "SELECT idEntrenador, nombreEntrenador FROM Entrenador";
+			try (PreparedStatement stmtEntrenadores = connection.prepareStatement(queryEntrenadores)) {
+				ResultSet rsEntrenadores = stmtEntrenadores.executeQuery();
+				while (rsEntrenadores.next()) {
+					System.out.println(rsEntrenadores.getInt("idEntrenador") + ". "
+							+ rsEntrenadores.getString("nombreEntrenador"));
+				}
+			}
+
+			System.out.print("Introduce el ID del entrenador al que deseas añadir el Pokémon: ");
+			int idEntrenador = sc.nextInt();
+			sc.nextLine(); 
 
 			String selectEntrenador = "SELECT * FROM Entrenador WHERE idEntrenador = ?";
 			try (PreparedStatement stmt = connection.prepareStatement(selectEntrenador)) {
-				stmt.setInt(1, id);
+				stmt.setInt(1, idEntrenador);
 				ResultSet rsEntrenador = stmt.executeQuery();
 
 				if (!rsEntrenador.next()) {
@@ -139,7 +155,7 @@ public class GestionEntrenadores {
 				String modificarEntrenador = "UPDATE Entrenador SET nombreEntrenador = ? WHERE idEntrenador = ?";
 				try (PreparedStatement preparedStatement = connection.prepareStatement(modificarEntrenador)) {
 					preparedStatement.setString(1, nuevoNombre);
-					preparedStatement.setInt(2, id);
+					preparedStatement.setInt(2, idEntrenador);
 					int rowsAffected = preparedStatement.executeUpdate();
 
 					if (rowsAffected > 0) {
@@ -153,4 +169,5 @@ public class GestionEntrenadores {
 			System.out.println("SQLException: " + e.getMessage());
 		}
 	}
+
 }

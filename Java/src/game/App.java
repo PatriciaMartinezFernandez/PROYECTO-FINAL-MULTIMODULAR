@@ -38,7 +38,7 @@ public class App {
 
 			case "1":
 
-				System.out.println("\n====================================\n");
+				System.out.println("\n== ENTRENADORES ====================\n");
 
 				System.out.println("1) Registrar entrenador");
 				System.out.println("2) Eliminar entrenador");
@@ -74,10 +74,39 @@ public class App {
 				break;
 
 			case "2":
+				
+				System.out.println("\n== EQUIPOS =========================\n");
+
+				System.out.println("1) Añadir Pokémon a un Equipo");
+				System.out.println("2) Quitar Pokémon de un Equipo");
+				System.out.println("X) Salir");
+
+				System.out.println("\n====================================\n");
+
+				opcion = sc.nextLine();
+
+				switch (opcion) {
+				default:
+					System.out.println("Opción inválida, elige otra vez");
+					break;
+
+				case "1":
+					GestionEquipos.aniadirPokemon();
+					break;
+
+				case "2":
+					GestionEquipos.eliminarPokemon();
+					break;
+
+				case "X", "x":
+					opcion = "0";
+					break;
+				}
+				
 				break;
 
 			case "3":
-				System.out.println("\n====================================\n");
+				System.out.println("\n== LISTADOS ========================\n");
 
 				System.out.println("1) Entrenadores desordenados");
 				System.out.println("2) Entrenador específico");

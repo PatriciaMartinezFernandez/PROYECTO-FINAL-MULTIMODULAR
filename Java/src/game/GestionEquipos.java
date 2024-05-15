@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class GestionEquipos {
@@ -21,139 +22,141 @@ public class GestionEquipos {
 		try {
 			connection = DriverManager.getConnection(url, user, password);
 		} catch (SQLException e) {
-			System.out.println("SQLException: " + e.getMessage());
+			System.out.println("Error al conectar con la base de datos: " + e.getMessage());
 		}
 	}
 
 	public static void aniadirPokemon() {
-	    try {
-	        System.out.println("Lista de Entrenadores:");
-	        String queryEntrenadores = "SELECT idEntrenador, nombreEntrenador FROM Entrenador";
-	        try (PreparedStatement stmtEntrenadores = connection.prepareStatement(queryEntrenadores)) {
-	            ResultSet rsEntrenadores = stmtEntrenadores.executeQuery();
-	            while (rsEntrenadores.next()) {
-	                System.out.println(rsEntrenadores.getInt("idEntrenador") + ". " + rsEntrenadores.getString("nombreEntrenador"));
-	            }
-	        }
+		try {
+			System.out.println("Lista de Entrenadores:");
+			String queryEntrenadores = "SELECT idEntrenador, nombreEntrenador FROM Entrenador";
+			try (PreparedStatement stmtEntrenadores = connection.prepareStatement(queryEntrenadores)) {
+				ResultSet rsEntrenadores = stmtEntrenadores.executeQuery();
+				while (rsEntrenadores.next()) {
+					System.out.println(rsEntrenadores.getInt("idEntrenador") + ". "
+							+ rsEntrenadores.getString("nombreEntrenador"));
+				}
+			}
 
-	        System.out.print("Introduce el ID del entrenador al que deseas añadir el Pokémon: ");
-	        int idEntrenador = sc.nextInt();
-	        sc.nextLine();
+			System.out.print("Introduce el ID del entrenador al que deseas añadir el Pokémon: ");
+			int idEntrenador = sc.nextInt();
+			sc.nextLine();
 
-	        if (!tieneEquipo(idEntrenador)) {
-	            crearEquipo(idEntrenador);
-	        }
+			if (!tieneEquipo(idEntrenador)) {
+				crearEquipo(idEntrenador);
+			}
 
-	        System.out.println("\nLista de Pokémon:");
-	        String queryPokemon = "SELECT idPokemon, nombrePokemon FROM Pokemon";
-	        try (PreparedStatement stmtPokemon = connection.prepareStatement(queryPokemon)) {
-	            ResultSet rsPokemon = stmtPokemon.executeQuery();
-	            int count = 0;
-	            while (rsPokemon.next()) {
-	                if (count % 10 == 0 && count != 0) {
-	                    System.out.println(); 
-	                }
-	                System.out.print(rsPokemon.getInt("idPokemon") + ". " + rsPokemon.getString("nombrePokemon") + "\t");
-	                count++;
-	            }
-	        }
+			System.out.println("\nLista de Pokémon:");
+			String queryPokemon = "SELECT idPokemon, nombrePokemon FROM Pokemon";
+			try (PreparedStatement stmtPokemon = connection.prepareStatement(queryPokemon)) {
+				ResultSet rsPokemon = stmtPokemon.executeQuery();
+				int count = 0;
+				while (rsPokemon.next()) {
+					if (count % 10 == 0 && count != 0) {
+						System.out.println();
+					}
+					System.out
+							.print(rsPokemon.getInt("idPokemon") + ". " + rsPokemon.getString("nombrePokemon") + "\t");
+					count++;
+				}
+			}
 
-	        System.out.print("\nIntroduce el ID o nombre del Pokémon que deseas añadir: ");
-	        String pokemonInput = sc.nextLine().trim();
+			System.out.print("\nIntroduce el ID o nombre del Pokémon que deseas añadir: ");
+			String pokemonInput = sc.nextLine().trim();
 
-	        int idPokemon;
-	        try {
-	            idPokemon = Integer.parseInt(pokemonInput);
-	        } catch (NumberFormatException e) {
-	            idPokemon = -1;
-	        }
+			int idPokemon;
+			try {
+				idPokemon = Integer.parseInt(pokemonInput);
+			} catch (NumberFormatException e) {
+				idPokemon = -1;
+			}
 
-	        if (idPokemon != -1) {
-	            insertarPokemon(idEntrenador, idPokemon);
-	        } else {
-	            idPokemon = buscarIdPokemonPorNombre(pokemonInput);
-	            if (idPokemon != -1) {
-	                insertarPokemon(idEntrenador, idPokemon);
-	            } else {
-	                System.out.println("No se encontró ningún Pokémon con ese nombre.");
-	            }
-	        }
-	    } catch (SQLException e) {
-	        System.out.println("SQLException: " + e.getMessage());
-	    }
+			if (idPokemon != -1) {
+				insertarPokemon(idEntrenador, idPokemon);
+			} else {
+				idPokemon = buscarIdPokemonPorNombre(pokemonInput);
+				if (idPokemon != -1) {
+					insertarPokemon(idEntrenador, idPokemon);
+				} else {
+					System.out.println("No se encontró ningún Pokémon con ese nombre.");
+				}
+			}
+		} catch (SQLException e) {
+			System.out.println("Error al añadir el Pokémon: " + e.getMessage());
+		} catch (InputMismatchException e) {
+			System.out.println("Error: Se esperaba un ID válido.");
+		}
 	}
 
 	public static void eliminarPokemon() {
-	    try {
-	        System.out.println("Lista de Entrenadores:");
-	        String queryEntrenadores = "SELECT idEntrenador, nombreEntrenador FROM Entrenador";
-	        try (PreparedStatement stmtEntrenadores = connection.prepareStatement(queryEntrenadores)) {
-	            ResultSet rsEntrenadores = stmtEntrenadores.executeQuery();
-	            while (rsEntrenadores.next()) {
-	                System.out.println(rsEntrenadores.getInt("idEntrenador") + ". " + rsEntrenadores.getString("nombreEntrenador"));
-	            }
-	        }
-	        
-	        System.out.print("Introduce el ID del entrenador cuyo Pokémon deseas eliminar: ");
-	        int idEntrenador = sc.nextInt();
-	        sc.nextLine(); 
+		try {
+			System.out.println("Lista de Entrenadores:");
+			String queryEntrenadores = "SELECT idEntrenador, nombreEntrenador FROM Entrenador";
+			try (PreparedStatement stmtEntrenadores = connection.prepareStatement(queryEntrenadores)) {
+				ResultSet rsEntrenadores = stmtEntrenadores.executeQuery();
+				while (rsEntrenadores.next()) {
+					System.out.println(rsEntrenadores.getInt("idEntrenador") + ". "
+							+ rsEntrenadores.getString("nombreEntrenador"));
+				}
+			}
 
-	        String nombreEntrenador = obtenerNombreEntrenador(idEntrenador);
-	        if (nombreEntrenador == null) {
-	            System.out.println("No se encontró ningún entrenador con el ID especificado.");
-	            return;
-	        }
+			System.out.print("Introduce el ID del entrenador cuyo Pokémon deseas eliminar: ");
+			int idEntrenador = sc.nextInt();
+			sc.nextLine();
 
-	        System.out.println("Equipo del Entrenador " + nombreEntrenador + ":");
-	        String queryEquipo = "SELECT EC.idPokemon, P.nombrePokemon " +
-	                             "FROM EquipoContienePokemons EC " +
-	                             "INNER JOIN Pokemon P ON EC.idPokemon = P.idPokemon " +
-	                             "WHERE EC.idEquipo = ?";
-	        try (PreparedStatement stmtEquipo = connection.prepareStatement(queryEquipo)) {
-	            stmtEquipo.setInt(1, idEntrenador);
-	            ResultSet rsEquipo = stmtEquipo.executeQuery();
-	            int count = 0;
-	            while (rsEquipo.next()) {
-	                if (count % 10 == 0 && count != 0) {
-	                    System.out.println(); 
-	                }
-	                System.out.print("ID " + rsEquipo.getInt("idPokemon") + ": " + rsEquipo.getString("nombrePokemon") + "\t");
-	                count++;
-	            }
-	        }
+			String nombreEntrenador = obtenerNombreEntrenador(idEntrenador);
+			if (nombreEntrenador == null) {
+				System.out.println("No se encontró ningún entrenador con el ID especificado.");
+				return;
+			}
 
-	        System.out.print("\nIntroduce el ID del Pokémon que deseas eliminar del equipo: ");
-	        int idPokemon = sc.nextInt();
+			System.out.println("Equipo del Entrenador " + nombreEntrenador + ":");
+			String queryEquipo = "SELECT EC.idPokemon, P.nombrePokemon " + "FROM EquipoContienePokemons EC "
+					+ "INNER JOIN Pokemon P ON EC.idPokemon = P.idPokemon " + "WHERE EC.idEquipo = ?";
+			try (PreparedStatement stmtEquipo = connection.prepareStatement(queryEquipo)) {
+				stmtEquipo.setInt(1, idEntrenador);
+				ResultSet rsEquipo = stmtEquipo.executeQuery();
+				int count = 0;
+				while (rsEquipo.next()) {
+					if (count % 10 == 0 && count != 0) {
+						System.out.println();
+					}
+					System.out.print(
+							"ID " + rsEquipo.getInt("idPokemon") + ": " + rsEquipo.getString("nombrePokemon") + "\t");
+					count++;
+				}
+			}
 
-	        String deletePokemon = "DELETE FROM EquipoContienePokemons WHERE idEquipo = ? AND idPokemon = ?";
-	        try (PreparedStatement stmtDeletePokemon = connection.prepareStatement(deletePokemon)) {
-	            stmtDeletePokemon.setInt(1, idEntrenador);
-	            stmtDeletePokemon.setInt(2, idPokemon);
-	            int rowsAffected = stmtDeletePokemon.executeUpdate();
-	            if (rowsAffected > 0) {
-	                System.out.println("Pokémon eliminado correctamente del equipo del entrenador.");
-	            } else {
-	                System.out.println("El Pokémon no está en el equipo del entrenador.");
-	            }
-	        }
-	    } catch (SQLException e) {
-	        System.out.println("SQLException: " + e.getMessage());
-	    }
+			System.out.print("\nIntroduce el ID del Pokémon que deseas eliminar del equipo: ");
+			int idPokemon = sc.nextInt();
+
+			String deletePokemon = "DELETE FROM EquipoContienePokemons WHERE idEquipo = ? AND idPokemon = ?";
+			try (PreparedStatement stmtDeletePokemon = connection.prepareStatement(deletePokemon)) {
+				stmtDeletePokemon.setInt(1, idEntrenador);
+				stmtDeletePokemon.setInt(2, idPokemon);
+				int rowsAffected = stmtDeletePokemon.executeUpdate();
+				if (rowsAffected > 0) {
+					System.out.println("Pokémon eliminado correctamente del equipo del entrenador.");
+				} else {
+					System.out.println("El Pokémon no está en el equipo del entrenador.");
+				}
+			}
+		} catch (SQLException e) {
+			System.out.println("Error al eliminar el Pokémon: " + e.getMessage());
+		}
 	}
-
 
 	private static String obtenerNombreEntrenador(int idEntrenador) throws SQLException {
-	    String queryNombreEntrenador = "SELECT nombreEntrenador FROM Entrenador WHERE idEntrenador = ?";
-	    try (PreparedStatement stmtNombreEntrenador = connection.prepareStatement(queryNombreEntrenador)) {
-	        stmtNombreEntrenador.setInt(1, idEntrenador);
-	        ResultSet rsNombreEntrenador = stmtNombreEntrenador.executeQuery();
-	        if (rsNombreEntrenador.next()) {
-	            return rsNombreEntrenador.getString("nombreEntrenador");
-	        }
-	    }
-	    return null;
+		String queryNombreEntrenador = "SELECT nombreEntrenador FROM Entrenador WHERE idEntrenador = ?";
+		try (PreparedStatement stmtNombreEntrenador = connection.prepareStatement(queryNombreEntrenador)) {
+			stmtNombreEntrenador.setInt(1, idEntrenador);
+			ResultSet rsNombreEntrenador = stmtNombreEntrenador.executeQuery();
+			if (rsNombreEntrenador.next()) {
+				return rsNombreEntrenador.getString("nombreEntrenador");
+			}
+		}
+		return null;
 	}
-
 
 	private static boolean tieneEquipo(int idEntrenador) throws SQLException {
 		String query = "SELECT COUNT(*) AS count FROM Equipo WHERE idEntrenador = ?";
@@ -241,4 +244,5 @@ public class GestionEquipos {
 		}
 		return -1;
 	}
+	
 }

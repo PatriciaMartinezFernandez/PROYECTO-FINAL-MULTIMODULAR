@@ -21,9 +21,8 @@ public class App {
 			System.out.println("4) Comprar Objetos");
 			System.out.println("5) Retar Gimnasio");
 			System.out.println("6) Ver Estuche");
-			System.out.println("7) Ver Equipo");
-			System.out.println("8) Ver Mochila");
-			System.out.println("9) Pokédex");
+			System.out.println("7) Ver Mochila");
+			System.out.println("8) Pokédex");
 			System.out.println("X) Salir");
 
 			System.out.println("\n====================================\n");
@@ -59,7 +58,7 @@ public class App {
 					break;
 
 				case "2":
-					eliminarEntrenador();
+					GestionEntrenadores.eliminarEntrenadorPorID();
 					break;
 
 				case "3":
@@ -74,7 +73,7 @@ public class App {
 				break;
 
 			case "2":
-				
+
 				System.out.println("\n== EQUIPOS =========================\n");
 
 				System.out.println("1) Añadir Pokémon a un Equipo");
@@ -102,7 +101,7 @@ public class App {
 					opcion = "0";
 					break;
 				}
-				
+
 				break;
 
 			case "3":
@@ -129,13 +128,37 @@ public class App {
 					break;
 
 				case "1":
-					GestionEntrenadores.imprimirEntrenadores();
+					GestionListas.imprimirEntrenadores();
 					break;
 
 				case "2":
+					GestionListas.imprimirEntrenadorPorID();
 					break;
 
 				case "3":
+					break;
+
+				case "4":
+					break;
+
+				case "5":
+					GestionListas.imprimirEntrenadorNumPokemon();
+					break;
+
+				case "6":
+					GestionListas.imprimirEntrenadorPorTipo();
+					break;
+
+				case "7":
+					GestionListas.imprimirEntrenadoresPorPopularidadEquipo();
+					break;
+
+				case "8":
+					GestionListas.imprimirEntrenadoresPorPesoEquipo();
+					break;
+
+				case "9":
+					GestionListas.imprimirEntrenadoresPorAlturaEquipo();
 					break;
 
 				case "X", "x":
@@ -145,6 +168,19 @@ public class App {
 
 				break;
 
+			case "4":
+			    GestionEntrenadores.elegirEntrenador();
+			    System.out.println("\n== TIENDA =========================\n");
+			    GestionObjetos.imprimirTienda();
+			    System.out.println("\n====================================\n");
+			    GestionObjetos.comprarTienda(GestionEntrenadores.idEntrenador);
+			    break;
+
+			case "7":
+				GestionEntrenadores.elegirEntrenador();
+				GestionObjetos.mostrarMochila(GestionEntrenadores.idEntrenador);
+				break;
+				
 			}
 
 		} while (!opcion.toLowerCase().equals("x"));
@@ -162,16 +198,6 @@ public class App {
 		Entrenador entrenador = new Entrenador(nombre);
 
 		GestionEntrenadores.aniadirEntrenador(entrenador);
-	}
-
-	public static void eliminarEntrenador() {
-		int id;
-
-		System.out.print("Introduce el id del entrenador a eliminar: ");
-		id = sc.nextInt();
-		sc.nextLine();
-
-		GestionEntrenadores.eliminarEntrenadorPorID(id);
 	}
 
 }

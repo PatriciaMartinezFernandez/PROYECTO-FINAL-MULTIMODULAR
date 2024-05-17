@@ -322,7 +322,7 @@ public class GestionListas {
 	                int cantidadObjetos = rs.getInt("cantidadObjetos");
 	                String nombrePokemon = rs.getString("nombrePokemon");
 	                String nombreMedallas = rs.getString("nombreMedallas");
-	                int pesoTotal = rs.getInt("pesoTotal");
+	                double pesoTotal = rs.getDouble("pesoTotal");
 
 	                fichaEntrenador(idEntrenador, nombreEntrenador, fechaCreacion, cantidadObjetos, nombrePokemon, nombreMedallas);
 	                System.out.println("Peso del Equipo: " + pesoTotal + "kg");
@@ -372,7 +372,7 @@ public class GestionListas {
 	                int cantidadObjetos = rs.getInt("cantidadObjetos");
 	                String nombrePokemon = rs.getString("nombrePokemon");
 	                String nombreMedallas = rs.getString("nombreMedallas");
-	                int alturaTotal = rs.getInt("alturaTotal");
+	                double alturaTotal = rs.getDouble("alturaTotal");
 
 	                fichaEntrenador(idEntrenador, nombreEntrenador, fechaCreacion, cantidadObjetos, nombrePokemon, nombreMedallas);
 	                System.out.println("Altura del Equipo: " + alturaTotal + "m");

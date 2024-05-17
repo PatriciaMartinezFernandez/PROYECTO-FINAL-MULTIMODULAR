@@ -176,9 +176,17 @@ public class App {
 			    GestionObjetos.comprarTienda(GestionEntrenadores.idEntrenador);
 			    break;
 
+			case "5":
+				GestionGimnasios.retarGimnasio();
+				break;
+			    
 			case "7":
 				GestionEntrenadores.elegirEntrenador();
 				GestionObjetos.mostrarMochila(GestionEntrenadores.idEntrenador);
+				break;
+				
+			case "8":
+				GestionPokemon.elegirPokemon();
 				break;
 				
 			}

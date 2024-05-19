@@ -20,16 +20,13 @@ Realizar un programa que permita la gestión de entrenadores pokémon y de sus e
 - Los usuarios podrán asignar equipos pokémon a los entrenadore registrados.
 - Se permite la adición y la eliminación de pokémon al equipo, teniendo un máximo de 6 pokémons.
 ### 6. Búsqueda de Entrenadores:
-- Los usuarios podrán buscar a los entrenadores por nombre, por el número de pokémons en su equipo, por el tipo de sus pokemons y por la popularidad de su equipo.
+- Los usuarios podrán buscar a los entrenadores por nombre, por el número de pokémons en su equipo, por el tipo de sus pokemons, por la popularidad de su equipo, por el peso total de su equipo y por la altura total de su equipo.
 ### 7. Datos de la Pokédex:
 - Los usuarios podrán buscar información detallada de cualquier pokémon de primera generación.
-### 8. Adición de Medallas:
-- Los usuarios podrán especificar el número de medallas con las que cuentan los entrenadores.
+### 8. Retar gimnasios:
+- Los usuarios podrán retar un gimnasio que hará 5 preguntas aleatorias sobre pokémon, si las acierta gana un medalla, siendo el máximo 8.
 - Se debe actualizar el entrenador.
-### 9. Eliminación de Medallas:
-- Los usuarios podrán especificar las medallas que quieren quitarle a los entrenadores.
-- Se debe actualizar el entrenador.
-### 10. Compra de Objetos:
+### 9. Compra de Objetos:
 - Los usuarios podrán comprarle objetos a los entrenadores, se guardará en su mochila
 - Se debe actualizar el entrenador con su mochila.
 
@@ -47,3 +44,7 @@ Realizar un programa que permita la gestión de entrenadores pokémon y de sus e
 - Medalla(**idMedalla**, nombre, ciudad, lider)
 - Mochila(**_idEntrenador_**, **_idObjeto_**, cantidad)
 - Objeto(**idObjeto**, nombreObjeto)
+
+## UML
+![Modelo lógico pkmnTrainers](PkmnTrainersUML.png)
+

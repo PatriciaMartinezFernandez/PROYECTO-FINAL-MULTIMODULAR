@@ -2,17 +2,12 @@ package game;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Scanner;
 
-public class GestionGimnasios {
+public class GestionGimnasios extends Gestion {
 
-	static Scanner sc = new Scanner(System.in);
-	public static final String AMARILLO = "\u001B[33m";
-	public static final String RESET = "\u001B[0m";
-	static HashMap<String, String> preguntasRespuestas = new HashMap<>();
+	static HashMap<String, String> preguntasRespuestas = new HashMap<String, String>();
 
-	public static void main(String[] args) {
-
+	public static void pregunstasRespuestasInit() {
 		preguntasRespuestas.put("Nombre del Profesor Pokémon en Kanto", "Oak");
 		preguntasRespuestas.put("Color de la Poké Ball original", "Rojo");
 		preguntasRespuestas.put("Tipo de Pikachu", "Electrico");
@@ -66,11 +61,10 @@ public class GestionGimnasios {
 		preguntasRespuestas.put("Evolución de Goldeen", "Seaking");
 		preguntasRespuestas.put("Tipo de Staryu", "Agua");
 		preguntasRespuestas.put("Evolución de Scyther", "Scizor");
-
 	}
 
 	public static void retarGimnasio() {
-	    System.out.println("\n== GIMNASIO ========================\n");
+	    System.out.println("\n==" + AMARILLO + " GIMNASIO " + RESET + "========================\n");
 	    System.out.println("¡Prepárate para retar al gimnasio!");
 	    System.out.println("Responde correctamente 5 preguntas para demostrar tu habilidad.\n");
 

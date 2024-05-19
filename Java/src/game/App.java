@@ -11,6 +11,9 @@ public class App {
 		// Variables
 		String opcion = "";
 
+		// Inicializar hashmap
+		GestionGimnasios.pregunstasRespuestasInit();
+
 		do {
 
 			System.out.println("\n========= POKEMON TRAINERS =========\n");
@@ -27,7 +30,7 @@ public class App {
 
 			System.out.println("\n====================================\n");
 
-			opcion = sc.nextLine();
+			opcion = sc.nextLine().trim();
 
 			switch (opcion) {
 
@@ -46,7 +49,7 @@ public class App {
 
 				System.out.println("\n====================================\n");
 
-				opcion = sc.nextLine();
+				opcion = sc.nextLine().trim();
 
 				switch (opcion) {
 				default:
@@ -169,29 +172,31 @@ public class App {
 				break;
 
 			case "4":
-			    GestionEntrenadores.elegirEntrenador();
-			    System.out.println("\n== TIENDA =========================\n");
-			    GestionObjetos.imprimirTienda();
-			    System.out.println("\n====================================\n");
-			    GestionObjetos.comprarTienda(GestionEntrenadores.idEntrenador);
-			    break;
+				GestionEntrenadores.elegirEntrenador();
+				System.out.println("\n== TIENDA =========================\n");
+				GestionObjetos.imprimirTienda();
+				System.out.println("\n====================================\n");
+				GestionObjetos.comprarTienda(GestionEntrenadores.idEntrenador);
+				break;
 
 			case "5":
 				GestionGimnasios.retarGimnasio();
 				break;
-			    
+
 			case "7":
 				GestionEntrenadores.elegirEntrenador();
 				GestionObjetos.mostrarMochila(GestionEntrenadores.idEntrenador);
 				break;
-				
+
 			case "8":
 				GestionPokemon.elegirPokemon();
 				break;
-				
+
+			case "X", "x":
+				break;
 			}
 
-		} while (!opcion.toLowerCase().equals("x"));
+		} while (!opcion.equalsIgnoreCase("x"));
 
 		System.out.println("Saliendo...");
 

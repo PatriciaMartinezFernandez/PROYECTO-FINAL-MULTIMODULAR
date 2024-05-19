@@ -1,34 +1,11 @@
 package game;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Scanner;
 
-public class GestionObjetos {
-
-	static Scanner sc = new Scanner(System.in);
-	
-	public static final String AMARILLO = "\u001B[33m";
-	public static final String RESET = "\u001B[0m";
-
-	private static String url = "jdbc:mysql://localhost:3306/PkmnTrainers";
-	private static String user = "root";
-	private static String password = "usuariodam";
-
-	private static Connection connection;
-
-	static {
-		try {
-			connection = DriverManager.getConnection(url, user, password);
-		} catch (SQLException e) {
-			System.out.println("Error al conectar con la base de datos: " + e.getMessage());
-		}
-	}
-
+public class GestionObjetos extends Gestion {
 
 	public static void imprimirTienda() {
 	    try {
@@ -42,7 +19,6 @@ public class GestionObjetos {
 	        e.getMessage();
 	    }
 	}
-
 
 	public static void comprarTienda(int idEntrenador) {
 	    System.out.print("Introduce el número del objeto que quieres comprar: ");

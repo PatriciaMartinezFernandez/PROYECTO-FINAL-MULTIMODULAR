@@ -1,33 +1,12 @@
 package game;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.InputMismatchException;
-import java.util.Scanner;
 
-public class GestionPokemon {
+public class GestionPokemon extends Gestion{
 
-	static Scanner sc = new Scanner(System.in);
-	public static final String AMARILLO = "\u001B[33m";
-	public static final String RESET = "\u001B[0m";
 	static int idPokemon;
-
-	private static String url = "jdbc:mysql://localhost:3306/PkmnTrainers";
-	private static String user = "root";
-	private static String password = "usuariodam";
-
-	private static Connection connection;
-
-	static {
-		try {
-			connection = DriverManager.getConnection(url, user, password);
-		} catch (SQLException e) {
-			System.out.println("Error al conectar con la base de datos: " + e.getMessage());
-		}
-	}
 
 	public static void elegirPokemon() {
 
@@ -98,6 +77,10 @@ public class GestionPokemon {
 
 	private static void fichaPokemon(int idPokemon, String nombrePokemon, String tipoPrimario, String tipoSecundario,
 			double altura, double peso, String descripcion) {
+		
+		if (tipoSecundario == null) {
+			tipoSecundario = "";
+		}
 
 		System.out.println("\n==" + AMARILLO + " POKÉDEX " + RESET
 				+ "==================================================================================================\r\n" + "\n"

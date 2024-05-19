@@ -1,30 +1,11 @@
 package game;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.InputMismatchException;
-import java.util.Scanner;
 
-public class GestionEquipos {
-
-	static Scanner sc = new Scanner(System.in);
-
-	private static String url = "jdbc:mysql://localhost:3306/PkmnTrainers";
-	private static String user = "root";
-	private static String password = "usuariodam";
-
-	private static Connection connection;
-
-	static {
-		try {
-			connection = DriverManager.getConnection(url, user, password);
-		} catch (SQLException e) {
-			System.out.println("Error al conectar con la base de datos: " + e.getMessage());
-		}
-	}
+public class GestionEquipos extends Gestion {
 
 	public static void aniadirPokemon() {
 		try {

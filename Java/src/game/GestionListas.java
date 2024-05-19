@@ -1,32 +1,11 @@
 package game;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.InputMismatchException;
-import java.util.Scanner;
 
-public class GestionListas {
-
-	static Scanner sc = new Scanner(System.in);
-	public static final String AMARILLO = "\u001B[33m";
-	public static final String RESET = "\u001B[0m";
-
-	private static String url = "jdbc:mysql://localhost:3306/PkmnTrainers";
-	private static String user = "root";
-	private static String password = "usuariodam";
-
-	private static Connection connection;
-
-	static {
-		try {
-			connection = DriverManager.getConnection(url, user, password);
-		} catch (SQLException e) {
-			System.out.println("Error al conectar con la base de datos: " + e.getMessage());
-		}
-	}
+public class GestionListas extends Gestion {
 
 	public static void imprimirEntrenadores() {
 		String query = "SELECT E.idEntrenador, E.nombreEntrenador, E.fechaCreacion, "
@@ -386,11 +365,11 @@ public class GestionListas {
 	    }
 	}
 
-	private static void fichaEntrenador(int idEntrenadorResult, String nombreEntrenador, String fechaCreacion,
+	private static void fichaEntrenador(int idEntrenador, String nombreEntrenador, String fechaCreacion,
 			int cantidadObjetos, String nombrePokemon, String nombreMedalla) {
 
 		System.out.println("\n==" + AMARILLO + " FICHA ENTRENADOR " + RESET + "============= Nº ID/"
-				+ idEntrenadorResult + " ==\n" + "\n• NOMBRE / " + nombreEntrenador + "\n"
+				+ idEntrenador + " ==\n" + "\n• NOMBRE / " + nombreEntrenador + "\n"
 				+ "---------------------------\n" + "• MOCHILA:\t" + cantidadObjetos + " objetos\n" + "• FECHA:\t"
 				+ fechaCreacion + "\n" + "• EQUIPO:\n  " + (nombrePokemon != null ? nombrePokemon : "") + "\n"
 				+ "• MEDALLAS:\n" + (nombreMedalla != null ? nombreMedalla : "")

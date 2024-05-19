@@ -1,12 +1,8 @@
 package game;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 
 public class Entrenador {
-
-	public static final String AMARILLO = "\u001B[33m";
-	public static final String RESET = "\u001B[0m";
 	
 	private static int contador = 0;
 	

@@ -38,11 +38,11 @@ Realizar un programa que permita la gestión de entrenadores pokémon y de sus e
 
 - Entrenador(**idEntrenadorPK**, nombreEntrenador, fechaCreacion)
 - Equipo(**idEquipoPK**, _idEntrenadorFK_)
-- EquipoContienePokemons(**_idEquipo_PKFK**, **_idPokemon_PKFK**)
+- EquipoContienePokemons(**_idEquipoPKFK_**, **_idPokemonPKFK_**)
 - Pokemon(**idPokemonPK**, nombrePokemon, altura, peso, descripcion, popularidad, tipoPrimario, tipoSecundario)
-- Estuche(**_idEntrenador_PKFK**, **_idMedalla_PKFK**)
+- Estuche(**_idEntrenadorPKFK_**, **_idMedallaPKFK_**)
 - Medalla(**idMedallaPK**, nombre, ciudad, lider)
-- Mochila(**_idEntrenador_PKFK**, **_idObjeto_PKFK**, cantidad)
+- Mochila(**_idEntrenadorPKFK_**, **_idObjetoPKFK_**, cantidad)
 - Objeto(**idObjetoPK**, nombreObjeto)
 
 ## UML

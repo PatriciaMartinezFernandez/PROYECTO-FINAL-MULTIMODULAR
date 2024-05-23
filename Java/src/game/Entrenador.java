@@ -1,9 +1,11 @@
 package game;
 
 import java.time.LocalDate;
+import java.util.Scanner;
 
 public class Entrenador {
 	
+	static Scanner sc = new Scanner(System.in);
 	private static int contador = 0;
 	
 	private int idEntrenador;
@@ -44,5 +46,15 @@ public class Entrenador {
 		this.fechaCreacion = fechaCreacion;
 	}
 
+	public static void crearEntrenador() {
+		String nombre;
 
+		System.out.print("Introduce el nombre del entrenador: ");
+		nombre = sc.nextLine();
+
+		Entrenador entrenador = new Entrenador(nombre);
+
+		GestionEntrenadores.aniadirEntrenador(entrenador);
+	}
+	
 }

@@ -1,15 +1,25 @@
 package game;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class GestionGimnasios extends Gestion {
+
+	public static final String ROJO = "\u001B[31m";
+	public static final String VERDE = "\u001B[32m";
 
 	static HashMap<String, String> preguntasRespuestas = new HashMap<String, String>();
 
 	public static void pregunstasRespuestasInit() {
 		preguntasRespuestas.put("Nombre del Profesor Pokémon en Kanto", "Oak");
-		preguntasRespuestas.put("Color de la Poké Ball original", "Rojo");
 		preguntasRespuestas.put("Tipo de Pikachu", "Electrico");
 		preguntasRespuestas.put("Evolución de Charmander", "Charmeleon");
 		preguntasRespuestas.put("Tipo de Bulbasaur", "Planta");
@@ -41,7 +51,7 @@ public class GestionGimnasios extends Gestion {
 		preguntasRespuestas.put("Líder del gimnasio tipo Eléctrico", "Lt Surge");
 		preguntasRespuestas.put("Evolución de Ponyta", "Rapidash");
 		preguntasRespuestas.put("Evolución de Slowpoke", "Slowbro");
-		preguntasRespuestas.put("Tipo de Magnemite", "Eléctrico");
+		preguntasRespuestas.put("Tipo de Magnemite", "Electrico");
 		preguntasRespuestas.put("Evolución de Doduo", "Dodrio");
 		preguntasRespuestas.put("Evolución de Seel", "Dewgong");
 		preguntasRespuestas.put("Líder del gimnasio tipo Psíquico", "Sabrina");
@@ -52,7 +62,7 @@ public class GestionGimnasios extends Gestion {
 		preguntasRespuestas.put("Evolución de Krabby", "Kingler");
 		preguntasRespuestas.put("Líder del gimnasio tipo Planta", "Erika");
 		preguntasRespuestas.put("Evolución de Cubone", "Marowak");
-		preguntasRespuestas.put("Evolución de Hitmonlee", "Hitmonchan");
+		preguntasRespuestas.put("Tipo de Hitmonlee", "Lucha");
 		preguntasRespuestas.put("Tipo de Koffing", "Veneno");
 		preguntasRespuestas.put("Evolución de Rhyhorn", "Rhydon");
 		preguntasRespuestas.put("Evolución de Tangela", "Tangrowth");
@@ -64,30 +74,121 @@ public class GestionGimnasios extends Gestion {
 	}
 
 	public static void retarGimnasio() {
-	    System.out.println("\n==" + AMARILLO + " GIMNASIO " + RESET + "========================\n");
-	    System.out.println("¡Prepárate para retar al gimnasio!");
-	    System.out.println("Responde correctamente 5 preguntas para demostrar tu habilidad.\n");
+		int idEntrenador = GestionEntrenadores.elegirEntrenador();
+		if (idEntrenador == -1) {
+			System.out.println(
+					ROJO + "Error al seleccionar el entrenador o no hay entrenadores disponibles. Inténtalo de nuevo."
+							+ RESET);
+			return;
+		}
 
-	    int correctas = 0;
-	    for (Map.Entry<String, String> entry : preguntasRespuestas.entrySet()) {
-	        System.out.println(entry.getKey() + ": ");
-	        String respuestaUsuario = sc.nextLine().trim();
-	        if (respuestaUsuario.equalsIgnoreCase(entry.getValue())) {
-	            correctas++;
-	            System.out.println("¡Correcto!\n");
-	        } else {
-	            System.out.println("Respuesta incorrecta. La respuesta correcta es: " + entry.getValue() + "\n");
-	        }
+		System.out.println("\n==" + AMARILLO + " GIMNASIO " + RESET + "========================\n");
 
-	        System.out.println("\n====================================\n");
+		String queryMedallas = "SELECT COUNT(*) AS medallas FROM Estuche WHERE idEntrenador = ?";
+		try (Connection connection = DriverManager.getConnection(url, user, password)) {
+			PreparedStatement stmtMedallas = connection.prepareStatement(queryMedallas);
+			stmtMedallas.setInt(1, idEntrenador);
+			ResultSet rsMedallas = stmtMedallas.executeQuery();
+			if (rsMedallas.next()) {
+				int numMedallas = rsMedallas.getInt("medallas");
+				if (numMedallas < 8) {
 
-	        if (correctas >= 5) {
-	            System.out.println("¡Felicidades! Has derrato el gimnasio.");
-	            break;
-	        }
-	    }
+					System.out.println("¡Prepárate para retar al gimnasio!");
+					System.out.println("Responde correctamente 5 preguntas para demostrar tu habilidad.\n");
+
+					List<Map.Entry<String, String>> preguntasSeleccionadas = seleccionarPreguntasAleatorias(5);
+
+					int correctas = 0;
+					for (Map.Entry<String, String> entry : preguntasSeleccionadas) {
+						System.out.print(entry.getKey() + ": ");
+						String respuestaUsuario = sc.nextLine().trim();
+						if (respuestaUsuario.equalsIgnoreCase(entry.getValue())) {
+							correctas++;
+							System.out.println(VERDE + "¡Correcto!\n" + RESET);
+						} else {
+							System.out.println(ROJO + "Respuesta incorrecta." + RESET + " La respuesta correcta es: "
+									+ entry.getValue() + "\n");
+						}
+					}
+
+					if (correctas == 5) {
+						System.out.println("¡Felicidades! Has derrotado al gimnasio.");
+						otorgarMedalla(idEntrenador);
+					} else {
+						System.out.println("¡Has perdido! Sigue intentándolo.");
+					}
+
+				} else {
+					System.out.println("¡Ya has conseguido todas las medallas!");
+				}
+			}
+		} catch (SQLException e) {
+			e.getMessage();
+		}
+
 	}
 
+	private static List<Map.Entry<String, String>> seleccionarPreguntasAleatorias(int cantidad) {
+		List<Map.Entry<String, String>> preguntasList = new ArrayList<>(preguntasRespuestas.entrySet());
+		Collections.shuffle(preguntasList);
+		return preguntasList.subList(0, cantidad);
+	}
 
+	private static void otorgarMedalla(int idEntrenador) {
+		String queryMedallas = "SELECT COUNT(*) AS medallas FROM Estuche WHERE idEntrenador = ?";
+		String queryInsertMedalla = "INSERT INTO Estuche (idEntrenador, idMedalla) VALUES (?, ?)";
+		String queryNextMedalla = "SELECT COALESCE(MAX(idMedalla), 0) + 1 AS nextMedalla FROM Estuche WHERE idEntrenador = ?";
 
+		try (Connection connection = DriverManager.getConnection(url, user, password)) {
+			PreparedStatement stmtMedallas = connection.prepareStatement(queryMedallas);
+			stmtMedallas.setInt(1, idEntrenador);
+			ResultSet rsMedallas = stmtMedallas.executeQuery();
+			if (rsMedallas.next()) {
+				int numMedallas = rsMedallas.getInt("medallas");
+				if (numMedallas < 8) {
+					PreparedStatement stmtNextMedalla = connection.prepareStatement(queryNextMedalla);
+					stmtNextMedalla.setInt(1, idEntrenador);
+					ResultSet rsNextMedalla = stmtNextMedalla.executeQuery();
+					if (rsNextMedalla.next()) {
+						int nextMedalla = rsNextMedalla.getInt("nextMedalla");
+
+						PreparedStatement stmtInsertMedalla = connection.prepareStatement(queryInsertMedalla);
+						stmtInsertMedalla.setInt(1, idEntrenador);
+						stmtInsertMedalla.setInt(2, nextMedalla);
+						stmtInsertMedalla.executeUpdate();
+						System.out.println("¡Has ganado la medalla número " + nextMedalla + "!");
+					}
+				} else {
+					System.out.println("¡Ya has conseguido todas las medallas!");
+				}
+			}
+		} catch (SQLException e) {
+			e.getMessage();
+		}
+	}
+
+	public static void mostrarEstuche(int idEntrenador) {
+		System.out.println("\n==" + AMARILLO + " ESTUCHE " + RESET + "=============== Nº ID/" + idEntrenador + " ==\n");
+
+		try {
+			String query = "SELECT Medalla.* FROM Estuche JOIN Medalla ON Estuche.idMedalla = Medalla.idMedalla WHERE idEntrenador = ?";
+			PreparedStatement pstmt = connection.prepareStatement(query);
+			pstmt.setInt(1, idEntrenador);
+			ResultSet resultSet = pstmt.executeQuery();
+
+			while (resultSet.next()) {
+				int idMedalla = resultSet.getInt("idMedalla");
+				String nombreMedalla = resultSet.getString("nombre");
+				String ciudad = resultSet.getString("ciudad");
+				String lider = resultSet.getString("lider");
+				System.out.println(
+						idMedalla + ". " + nombreMedalla + "\n  Ciudad: " + ciudad + "\n  Lider: " + lider + "\n");
+			}
+
+		} catch (SQLException e) {
+			System.out.println("Error al obtener el estuche: " + e.getMessage());
+		}
+
+		System.out.println("\n=====================================");
+	}
 }

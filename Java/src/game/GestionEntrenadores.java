@@ -3,151 +3,132 @@ package game;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.InputMismatchException;
 
 public class GestionEntrenadores extends Gestion {
 
-	static int idEntrenador;
+    static int idEntrenador;
 
-	public static void aniadirEntrenador(Entrenador entrenador) {
-		String query = "INSERT INTO Entrenador (nombreEntrenador, fechaCreacion) VALUES (?, NOW())";
+    public static void aniadirEntrenador(Entrenador entrenador) {
+        String query = "{CALL aniadirEntrenador(?)}";
 
-		try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-			preparedStatement.setString(1, entrenador.getNombreEntrenador());
-			preparedStatement.executeUpdate();
-			System.out.println("Entrenador registrado correctamente.");
-		} catch (SQLException e) {
-			System.out.println("Error al añadir entrenador: " + e.getMessage());
-		}
-	}
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setString(1, entrenador.getNombreEntrenador());
+            preparedStatement.executeUpdate();
+            System.out.println("Entrenador registrado correctamente.");
+        } catch (SQLException e) {
+            System.out.println("Error al añadir entrenador: " + e.getMessage());
+        }
+    }
 
-	public static void eliminarEntrenadorPorID() {
-		int id;
+    public static void eliminarEntrenadorPorID() {
+        try {
+            idEntrenador = elegirEntrenador();
 
-		try {
-			System.out.println("Lista de Entrenadores:");
-			String queryEntrenadores = "SELECT idEntrenador, nombreEntrenador FROM Entrenador";
-			try (PreparedStatement stmtEntrenadores = connection.prepareStatement(queryEntrenadores)) {
-				ResultSet rsEntrenadores = stmtEntrenadores.executeQuery();
-				while (rsEntrenadores.next()) {
-					System.out.println(rsEntrenadores.getInt("idEntrenador") + ". "
-							+ rsEntrenadores.getString("nombreEntrenador"));
-				}
-			}
+            String query = "{CALL eliminarEntrenadorPorID(?)}";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setInt(1, idEntrenador);
+                int rowsAffected = preparedStatement.executeUpdate();
 
-			System.out.print("Introduce el id del entrenador a eliminar: ");
-			id = sc.nextInt();
-			sc.nextLine();
+                if (rowsAffected > 0) {
+                    System.out.println("Entrenador eliminado correctamente.");
+                } else {
+                    System.out.println("No se encontró ningún entrenador con el ID especificado.");
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error al eliminar al entrenador: " + e.getMessage());
+        }
+    }
 
-			String deleteEquipoContienePokemonsQuery = "DELETE FROM EquipoContienePokemons WHERE idEquipo IN (SELECT idEquipo FROM Equipo WHERE idEntrenador = ?)";
-			try (PreparedStatement deleteEquipoContienePokemonsStmt = connection
-					.prepareStatement(deleteEquipoContienePokemonsQuery)) {
-				deleteEquipoContienePokemonsStmt.setInt(1, id);
-				deleteEquipoContienePokemonsStmt.executeUpdate();
-			}
+    public static void modificarEntrenador() {
+        String queryCount = "SELECT COUNT(*) AS total FROM Entrenador";
 
-			String deleteEquiposQuery = "DELETE FROM Equipo WHERE idEntrenador = ?";
-			try (PreparedStatement deleteEquiposStmt = connection.prepareStatement(deleteEquiposQuery)) {
-				deleteEquiposStmt.setInt(1, id);
-				deleteEquiposStmt.executeUpdate();
-			}
+        try (PreparedStatement stmtContar = connection.prepareStatement(queryCount)) {
+            ResultSet rs = stmtContar.executeQuery();
+            rs.next();
+            int totalEntrenadores = rs.getInt("total");
 
-			String deleteEntrenadorQuery = "DELETE FROM Entrenador WHERE idEntrenador = ?";
-			try (PreparedStatement deleteEntrenadorStmt = connection.prepareStatement(deleteEntrenadorQuery)) {
-				deleteEntrenadorStmt.setInt(1, id);
-				int rowsAffected = deleteEntrenadorStmt.executeUpdate();
+            if (totalEntrenadores == 0) {
+                System.out.println("No hay entrenadores registrados.");
+                return;
+            }
 
-				if (rowsAffected > 0) {
-					System.out.println("Entrenador eliminado correctamente.");
-				} else {
-					System.out.println("No se encontró ningún entrenador con el ID especificado.");
-				}
-			}
-		} catch (SQLException e) {
-			System.out.println("Error al eliminar al entrenador: " + e.getMessage());
-		}
-	}
+            idEntrenador = elegirEntrenador();
 
-	public static void modificarEntrenador() {
-		String queryCount = "SELECT COUNT(*) AS total FROM Entrenador";
+            String selectEntrenador = "SELECT * FROM Entrenador WHERE idEntrenador = ?";
+            try (PreparedStatement stmt = connection.prepareStatement(selectEntrenador)) {
+                stmt.setInt(1, idEntrenador);
+                ResultSet rsEntrenador = stmt.executeQuery();
 
-		try (PreparedStatement stmtContar = connection.prepareStatement(queryCount)) {
-			ResultSet rs = stmtContar.executeQuery();
-			rs.next();
-			int totalEntrenadores = rs.getInt("total");
+                if (!rsEntrenador.next()) {
+                    System.out.println("No se encontró ningún entrenador con el ID especificado.");
+                    return;
+                }
 
-			if (totalEntrenadores == 0) {
-				System.out.println("No hay entrenadores registrados.");
-				return;
-			}
+                String nombreActual = rsEntrenador.getString("nombreEntrenador");
 
-			System.out.println("Lista de Entrenadores:");
-			String queryEntrenadores = "SELECT idEntrenador, nombreEntrenador FROM Entrenador";
-			try (PreparedStatement stmtEntrenadores = connection.prepareStatement(queryEntrenadores)) {
-				ResultSet rsEntrenadores = stmtEntrenadores.executeQuery();
-				while (rsEntrenadores.next()) {
-					System.out.println(rsEntrenadores.getInt("idEntrenador") + ". "
-							+ rsEntrenadores.getString("nombreEntrenador"));
-				}
-			}
+                System.out.print("Introduce un nuevo nombre para este entrenador (" + nombreActual + "): ");
+                String nuevoNombre = sc.nextLine().trim();
 
-			System.out.print("Introduce el ID del entrenador al que deseas añadir el Pokémon: ");
-			int idEntrenador = sc.nextInt();
-			sc.nextLine();
+                if (nuevoNombre.isEmpty()) {
+                    nuevoNombre = nombreActual;
+                }
 
-			String selectEntrenador = "SELECT * FROM Entrenador WHERE idEntrenador = ?";
-			try (PreparedStatement stmt = connection.prepareStatement(selectEntrenador)) {
-				stmt.setInt(1, idEntrenador);
-				ResultSet rsEntrenador = stmt.executeQuery();
+                String modificarEntrenador = "{CALL modificarEntrenador(?, ?)}";
+                try (PreparedStatement preparedStatement = connection.prepareStatement(modificarEntrenador)) {
+                    preparedStatement.setInt(1, idEntrenador);
+                    preparedStatement.setString(2, nuevoNombre);
+                    int rowsAffected = preparedStatement.executeUpdate();
 
-				if (!rsEntrenador.next()) {
-					System.out.println("No se encontró ningún entrenador con el ID especificado.");
-					return;
-				}
+                    if (rowsAffected > 0) {
+                        System.out.println("Entrenador modificado correctamente.");
+                    } else {
+                        System.out.println("No se pudo modificar el entrenador.");
+                    }
+                }
 
-				String nombreActual = rsEntrenador.getString("nombreEntrenador");
+            }
+        } catch (SQLException e) {
+            System.out.println("Error al modificar el entrenador: " + e.getMessage());
+        }
+    }
 
-				System.out.print("Introduce un nuevo nombre para este entrenador (" + nombreActual + "): ");
-				String nuevoNombre = sc.nextLine().trim();
+    public static int elegirEntrenador() {
+        System.out.println("Lista de Entrenadores:");
+        String queryEntrenadores = "SELECT * FROM VistaEntrenadores";
+        boolean hayEntrenadores = false;
 
-				if (nuevoNombre.isEmpty()) {
-					nuevoNombre = nombreActual;
-				}
+        try (PreparedStatement stmtEntrenadores = connection.prepareStatement(queryEntrenadores)) {
+            ResultSet rsEntrenadores = stmtEntrenadores.executeQuery();
+            while (rsEntrenadores.next()) {
+                hayEntrenadores = true;
+                System.out.println(
+                        rsEntrenadores.getInt("idEntrenador") + ". " + rsEntrenadores.getString("nombreEntrenador"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return -1;
+        }
 
-				String modificarEntrenador = "UPDATE Entrenador SET nombreEntrenador = ? WHERE idEntrenador = ?";
-				try (PreparedStatement preparedStatement = connection.prepareStatement(modificarEntrenador)) {
-					preparedStatement.setString(1, nuevoNombre);
-					preparedStatement.setInt(2, idEntrenador);
-					int rowsAffected = preparedStatement.executeUpdate();
+        if (!hayEntrenadores) {
+            System.out.println("No hay entrenadores disponibles.");
+            return -1;
+        }
 
-					if (rowsAffected > 0) {
-						System.out.println("Entrenador modificado correctamente.");
-					} else {
-						System.out.println("No se pudo modificar el entrenador.");
-					}
-				}
-			}
-		} catch (SQLException e) {
-			System.out.println("Error al modificar el entrenador: " + e.getMessage());
-		}
-	}
+        int idEntrenador = 0; 
 
-	public static void elegirEntrenador() {
+        try {
+            System.out.print("Introduce el id del entrenador: ");
+            idEntrenador = sc.nextInt();
+            sc.nextLine();
+        } catch (InputMismatchException e) {
+            System.out.println("Error: Por favor, introduce un valor entero válido.");
+            sc.nextLine(); 
+        }
 
-		System.out.println("Lista de Entrenadores:");
-		String queryEntrenadores = "SELECT idEntrenador, nombreEntrenador FROM Entrenador";
-		try (PreparedStatement stmtEntrenadores = connection.prepareStatement(queryEntrenadores)) {
-			ResultSet rsEntrenadores = stmtEntrenadores.executeQuery();
-			while (rsEntrenadores.next()) {
-				System.out.println(
-						rsEntrenadores.getInt("idEntrenador") + ". " + rsEntrenadores.getString("nombreEntrenador"));
-			}
-		} catch (SQLException e) {
-			e.getMessage();
-		}
+        return idEntrenador;
+    }
 
-		System.out.print("Introduce el id del entrenador: ");
-
-		idEntrenador = sc.nextInt();
-	}
 
 }

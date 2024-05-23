@@ -57,7 +57,7 @@ public class App {
 					break;
 
 				case "1":
-					crearEntrenador();
+					Entrenador.crearEntrenador();
 					break;
 
 				case "2":
@@ -139,9 +139,11 @@ public class App {
 					break;
 
 				case "3":
+					GestionListas.imprimirEntrenadoresPorCantidadObjetos();
 					break;
 
 				case "4":
+					GestionListas.imprimirEntrenadoresPorCantidadMedallas();
 					break;
 
 				case "5":
@@ -172,20 +174,30 @@ public class App {
 				break;
 
 			case "4":
-				GestionEntrenadores.elegirEntrenador();
-				System.out.println("\n== TIENDA =========================\n");
-				GestionObjetos.imprimirTienda();
-				System.out.println("\n====================================\n");
-				GestionObjetos.comprarTienda(GestionEntrenadores.idEntrenador);
+				int idEntrenadorElegido = GestionEntrenadores.elegirEntrenador();
+
+				if (idEntrenadorElegido != -1) {
+					GestionEntrenadores.idEntrenador = idEntrenadorElegido;
+
+					System.out.println("\n== TIENDA =========================\n");
+					GestionObjetos.imprimirTienda();
+					System.out.println("\n====================================\n");
+					GestionObjetos.comprarTienda();
+				} else {
+					System.out.println("No se seleccionó un entrenador válido.");
+				}
 				break;
 
 			case "5":
 				GestionGimnasios.retarGimnasio();
 				break;
 
+			case "6":
+				GestionGimnasios.mostrarEstuche(GestionEntrenadores.elegirEntrenador());
+				break;
+
 			case "7":
-				GestionEntrenadores.elegirEntrenador();
-				GestionObjetos.mostrarMochila(GestionEntrenadores.idEntrenador);
+				GestionObjetos.mostrarMochila(GestionEntrenadores.elegirEntrenador());
 				break;
 
 			case "8":
@@ -200,17 +212,6 @@ public class App {
 
 		System.out.println("Saliendo...");
 
-	}
-
-	public static void crearEntrenador() {
-		String nombre;
-
-		System.out.print("Introduce el nombre del entrenador: ");
-		nombre = sc.nextLine();
-
-		Entrenador entrenador = new Entrenador(nombre);
-
-		GestionEntrenadores.aniadirEntrenador(entrenador);
 	}
 
 }

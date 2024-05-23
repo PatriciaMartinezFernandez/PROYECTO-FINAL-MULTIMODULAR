@@ -36,14 +36,14 @@ Realizar un programa que permita la gestión de entrenadores pokémon y de sus e
 ## Modelo lógico
 ![Modelo lógico pkmnTrainers](modelo_logico.png)
 
-- Entrenador(**idEntrenador**, nombreEntrenador, fechaCreacion)
-- Equipo(**idEquipo**, _idEntrenador_)
-- EquipoContienePokemons(**_idEquipo_**, **_idPokemon_**)
-- Pokemon(**idPokemon**, nombrePokemon, altura, peso, descripcion, popularidad, tipoPrimario, tipoSexundario)
-- Estuche(**_idEntrenador_**, **_idMedalla_**)
-- Medalla(**idMedalla**, nombre, ciudad, lider)
-- Mochila(**_idEntrenador_**, **_idObjeto_**, cantidad)
-- Objeto(**idObjeto**, nombreObjeto)
+- Entrenador(**idEntrenadorPK**, nombreEntrenador, fechaCreacion)
+- Equipo(**idEquipoPK**, _idEntrenadorFK_)
+- EquipoContienePokemons(**_idEquipo_PKFK**, **_idPokemon_PKFK**)
+- Pokemon(**idPokemonPK**, nombrePokemon, altura, peso, descripcion, popularidad, tipoPrimario, tipoSecundario)
+- Estuche(**_idEntrenador_PKFK**, **_idMedalla_PKFK**)
+- Medalla(**idMedallaPK**, nombre, ciudad, lider)
+- Mochila(**_idEntrenador_PKFK**, **_idObjeto_PKFK**, cantidad)
+- Objeto(**idObjetoPK**, nombreObjeto)
 
 ## UML
 ![Modelo lógico pkmnTrainers](PkmnTrainersUML.png)

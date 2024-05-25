@@ -48,3 +48,14 @@ Realizar un programa que permita la gestión de entrenadores pokémon y de sus e
 ## UML
 ![Modelo lógico pkmnTrainers](PkmnTrainersUML.png)
 
+## Pruebas Unitarias
+
+### 1. GestionEntrenadoresTest.java
+
+|          Entrada          |          Valor Esperado          |
+|---------------------------|----------------------------------|
+| Entrenador con nombre válido | Entrenador añadido correctamente |
+| Entrenador con nombre nulo   | Error al añadir entrenador: NullPointerException |
+| Entrenador con nombre vacío  | Error al añadir entrenador: IllegalArgumentException |
+| Conexión nula                | Error al añadir entrenador: SQLException |
+| Error durante la ejecución del procedimiento almacenado | Error al añadir entrenador: SQLException |

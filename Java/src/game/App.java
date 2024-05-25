@@ -1,11 +1,29 @@
 package game;
 
+import java.sql.SQLException;
 import java.util.Scanner;
+
+
+/**
+ * Esta clase representa la aplicación principal del juego Pokémon Trainers.
+ * Permite a los usuarios interactuar con diferentes funcionalidades del juego
+ * como la gestión de entrenadores, equipos, objetos y gimnasios, además de
+ * una pokédex funcional con todos los datos de los primeros 151 pokémons 
+ * pertenecientes a la primera generación.
+ * 
+ * @author Jaime Martínez Fernández
+ */
 
 public class App {
 
 	static Scanner sc = new Scanner(System.in);
 
+	/**
+	 * Método principal que inicia la aplicación.
+	 * 
+	 * @param args
+	 */
+	
 	public static void main(String[] args) {
 
 		// Variables
@@ -212,7 +230,11 @@ public class App {
 
 		System.out.println("Saliendo...");
 		
-
+		try {
+			Gestion.connection.close();
+		} catch (SQLException e) {
+			e.getMessage();
+		}
 	}
 
 }

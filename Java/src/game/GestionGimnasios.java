@@ -11,12 +11,24 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * La clase GestionGimnasios se encarga de gestionar los gimnasios en el juego.
+ * Proporciona métodos para retar gimnasios, otorgar medallas a los entrendores
+ * y mostrar el estuche.
+ * 
+ * @author Jaime Martínez Fernández
+ */
+
 public class GestionGimnasios extends Gestion {
 
 	public static final String ROJO = "\u001B[31m";
 	public static final String VERDE = "\u001B[32m";
 
 	static HashMap<String, String> preguntasRespuestas = new HashMap<String, String>();
+
+	/**
+	 * Inicializa el conjunto de preguntas y respuestas para los gimnasios.
+	 */
 
 	public static void pregunstasRespuestasInit() {
 		preguntasRespuestas.put("Nombre del Profesor Pokémon en Kanto", "Oak");
@@ -73,6 +85,11 @@ public class GestionGimnasios extends Gestion {
 		preguntasRespuestas.put("Evolución de Scyther", "Scizor");
 	}
 
+	/**
+	 * Permite al jugador retar a un gimnasio respondiendo preguntas. Si el jugador
+	 * responde correctamente a todas las preguntas, gana una medalla.
+	 */
+
 	public static void retarGimnasio() {
 		int idEntrenador = GestionEntrenadores.elegirEntrenador();
 		if (idEntrenador == -1) {
@@ -128,12 +145,26 @@ public class GestionGimnasios extends Gestion {
 
 	}
 
+	/**
+	 * Selecciona un número especifico de preguntas de manera aleatoria del conjunto
+	 * de preguntas disponibles.
+	 * 
+	 * @param cantidad Número de preguntas a seleccionar
+	 * @return Lista de preguntas y respuestas seleccionadas aleatoriamente
+	 */
+
 	private static List<Map.Entry<String, String>> seleccionarPreguntasAleatorias(int cantidad) {
 		List<Map.Entry<String, String>> preguntasList = new ArrayList<>(preguntasRespuestas.entrySet());
 		Collections.shuffle(preguntasList);
 		return preguntasList.subList(0, cantidad);
 	}
 
+	/**
+	 * Otorga una medalla al entrenador si vence un gimnasio.
+	 * 
+	 * @param idEntrenador ID del entrenador que venció el gimnasio
+	 */
+	
 	private static void otorgarMedalla(int idEntrenador) {
 		String queryMedallas = "SELECT COUNT(*) AS medallas FROM Estuche WHERE idEntrenador = ?";
 		String queryInsertMedalla = "INSERT INTO Estuche (idEntrenador, idMedalla) VALUES (?, ?)";
@@ -167,6 +198,12 @@ public class GestionGimnasios extends Gestion {
 		}
 	}
 
+	/**
+	 * Muestra las medallas obtenidas por un entrendor especifico.
+	 * 
+	 * @param idEntrenador ID del entrenador cuyo estuche de medallas se mostrará
+	 */
+	
 	public static void mostrarEstuche(int idEntrenador) {
 		System.out.println("\n==" + AMARILLO + " ESTUCHE " + RESET + "=============== Nº ID/" + idEntrenador + " ==\n");
 

@@ -15,9 +15,22 @@ import org.junit.jupiter.api.Test;
 import game.Entrenador;
 import game.GestionEntrenadores;
 
+/**
+ * La clase AniadirEntrenadorTest contiene pruebas unitarias para el método
+ * {@code aniadirEntrenador} de la clase {@code GestionEntrenadores}.
+ * 
+ * Las pruebas se ejecutan usando JUnit y verifican el comportamiento del método
+ * al añadir un entrenador con diferentes tipos de nombres (válidos, nulos y
+ * vacíos).
+ */
+
 public class AniadirEntrenadorTest {
 
 	private static Connection connection;
+
+	/**
+	 * Establece una conexión a la base de datos antes de ejecutar las pruebas.
+	 */
 
 	@BeforeAll
 	public static void conectar() {
@@ -33,6 +46,10 @@ public class AniadirEntrenadorTest {
 
 	}
 
+	/**
+	 * Cierra la conexión a la base de datos después de ejecutar todas las pruebas.
+	 */
+
 	@AfterAll
 	public static void cerrar() {
 		try {
@@ -44,8 +61,12 @@ public class AniadirEntrenadorTest {
 		}
 	}
 
+	/**
+	 * Prueba que el método {@code aniadirEntrenador} no lanza excepciones cuando se
+	 * añade un entrenador con un nombre válido.
+	 */
+
 	@Test
-	// Test de un entrenador con un nombre válido
 	public void testAniadirEntrenador_NombreValido() {
 		Entrenador entrenador = new Entrenador("Ash");
 		assertDoesNotThrow(() -> {
@@ -53,23 +74,32 @@ public class AniadirEntrenadorTest {
 		});
 	}
 
+	/**
+	 * Prueba que el método {@code aniadirEntrenador} lanza un
+	 * {@code IllegalArgumentException} cuando se intenta añadir un entrenador con
+	 * un nombre nulo.
+	 */
+
 	@Test
-	// Test de un entrenador con un nombre nulo
 	public void testAniadirEntrenador_NombreNulo() {
-	    Entrenador entrenador = new Entrenador(null);
-	    assertThrows(IllegalArgumentException.class, () -> {
-	        GestionEntrenadores.aniadirEntrenador(entrenador);
-	    });
+		Entrenador entrenador = new Entrenador(null);
+		assertThrows(IllegalArgumentException.class, () -> {
+			GestionEntrenadores.aniadirEntrenador(entrenador);
+		});
 	}
 
+	/**
+	 * Prueba que el método {@code aniadirEntrenador} lanza un
+	 * {@code IllegalArgumentException} cuando se intenta añadir un entrenador con
+	 * un nombre vacío.
+	 */
 
 	@Test
-	// Test de un entrenador con un nombre vacio
 	public void testAniadirEntrenador_NombreVacio() {
-        Entrenador entrenador = new Entrenador("");
-        assertThrows(IllegalArgumentException.class, () -> {
-            GestionEntrenadores.aniadirEntrenador(entrenador);
-        });
-    }
+		Entrenador entrenador = new Entrenador("");
+		assertThrows(IllegalArgumentException.class, () -> {
+			GestionEntrenadores.aniadirEntrenador(entrenador);
+		});
+	}
 
 }

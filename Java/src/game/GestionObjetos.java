@@ -5,7 +5,20 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * La clase GestionObjetos proporciona métodos para gestionar los objetos dentro
+ * del juego. Incluyendo la visualización de la tienda, la compra de objetos y
+ * la visualización de la mochila del jugador.
+ * 
+ * @author Jaime Martínez Fernández
+ */
+
 public class GestionObjetos extends Gestion {
+
+	/**
+	 * Este método realiza una consulta a la vista de la tienda en la base de datos
+	 * y si ocurre un error de SQL imprime el mensaje.
+	 */
 
 	public static void imprimirTienda() {
 		try {
@@ -21,6 +34,12 @@ public class GestionObjetos extends Gestion {
 			System.out.println("Error en la consulta SQL: " + e.getMessage());
 		}
 	}
+
+	/**
+	 * Permite al jugador comprar un objeto de la tienda. Solicita al jugador que
+	 * introduzca el ID del objeto y la cantidad. Si ocurre un error de SQL imprime
+	 * el mensaje.
+	 */
 
 	public static void comprarTienda() {
 		System.out.print("Introduce el número del objeto que quieres comprar: ");
@@ -44,6 +63,13 @@ public class GestionObjetos extends Gestion {
 			System.out.println("Error en la consulta SQL: " + e.getMessage());
 		}
 	}
+
+	/**
+	 * Muestra los objetos y sus cantidades en la mochila del entrenador
+	 * especificado. Si ocurre un error de SQL imprime el mensaje.
+	 * 
+	 * @param idEntrenador ID del entrenador cuya mochila se va a mostrar.
+	 */
 
 	public static void mostrarMochila(int idEntrenador) {
 		System.out.println("\n== MOCHILA ====================== Nº ID/" + idEntrenador + " ==\n");

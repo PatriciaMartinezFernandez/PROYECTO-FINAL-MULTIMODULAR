@@ -5,7 +5,19 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.InputMismatchException;
 
+/**
+ * La clase GestionListas proporciona métodos para mostrar información sobre los
+ * entrenadores.
+ * 
+ * @author Jaime Martínez Fernández
+ */
+
 public class GestionListas extends Gestion {
+
+	/**
+	 * Imprime la información de todos los usuarios, incluyendo sus objetos, sus
+	 * Pokémons y sus medallas.
+	 */
 
 	public static void imprimirEntrenadores() {
 		String query = "SELECT E.idEntrenador, E.nombreEntrenador, E.fechaCreacion, "
@@ -43,6 +55,10 @@ public class GestionListas extends Gestion {
 			System.out.println("Error al imprimir los entrenadores: " + e.getMessage());
 		}
 	}
+
+	/**
+	 * Imprime la información de un entenador especifico.
+	 */
 
 	public static void imprimirEntrenadorPorID() {
 		int idEntrenador;
@@ -103,6 +119,11 @@ public class GestionListas extends Gestion {
 		}
 	}
 
+	/**
+	 * Imprime la información de los entrenadores ordenados por la cantidad de
+	 * Pokémons que hay en su equipo.
+	 */
+
 	public static void imprimirEntrenadorNumPokemon() {
 		try {
 			String query = "SELECT E.idEntrenador, E.nombreEntrenador, E.fechaCreacion, "
@@ -148,6 +169,11 @@ public class GestionListas extends Gestion {
 			System.out.println("Error: " + e.getMessage());
 		}
 	}
+
+	/**
+	 * Imprime la información del entrendores que tienen Pokémons de un tipo
+	 * especifico.
+	 */
 
 	public static void imprimirEntrenadorPorTipo() {
 		String tipoEspecifico;
@@ -197,8 +223,7 @@ public class GestionListas extends Gestion {
 					fichaEntrenador(idEntrenador, nombreEntrenador, fechaCreacion, cantidadObjetos, nombrePokemon,
 							nombreMedallas);
 
-					System.out.println("De tipo " + tipoEspecifico +": " + nombrePokemonConTipo);
-					
+					System.out.println("De tipo " + tipoEspecifico + ": " + nombrePokemonConTipo);
 
 				} while (rs.next());
 
@@ -210,258 +235,277 @@ public class GestionListas extends Gestion {
 		}
 	}
 
+	/**
+	 * Imprime la información de los entrenadores ordenados por la popularidad
+	 * promedia de su equipo.
+	 */
+
 	public static void imprimirEntrenadoresPorPopularidadEquipo() {
-	    try {
-	        String query = "SELECT E.idEntrenador, E.nombreEntrenador, E.fechaCreacion, "
-	                + "COUNT(M.idObjeto) AS cantidadObjetos, "
-	                + "(SELECT GROUP_CONCAT(P.nombrePokemon SEPARATOR ' | ') "
-	                + "FROM EquipoContienePokemons EC "
-	                + "INNER JOIN Pokemon P ON EC.idPokemon = P.idPokemon "
-	                + "WHERE EC.idEquipo = EQ.idEquipo) AS nombrePokemon, "
-	                + "(SELECT GROUP_CONCAT(MD.nombre SEPARATOR ' | ') "
-	                + "FROM Estuche ES "
-	                + "INNER JOIN Medalla MD ON ES.idMedalla = MD.idMedalla "
-	                + "WHERE ES.idEntrenador = E.idEntrenador) AS nombreMedallas, "
-	                + "SUM(P.popularidad) AS popularidadTotal, "
-	                + "(SUM(P.popularidad) / COUNT(DISTINCT ECP.idPokemon)) AS popularidadPromedioPorPokemon "
-	                + "FROM Entrenador E "
-	                + "INNER JOIN Equipo EQ ON E.idEntrenador = EQ.idEntrenador "
-	                + "INNER JOIN EquipoContienePokemons ECP ON EQ.idEquipo = ECP.idEquipo "
-	                + "INNER JOIN Pokemon P ON ECP.idPokemon = P.idPokemon "
-	                + "LEFT JOIN Mochila M ON E.idEntrenador = M.idEntrenador "
-	                + "GROUP BY E.idEntrenador, E.nombreEntrenador, E.fechaCreacion, EQ.idEquipo "
-	                + "ORDER BY popularidadPromedioPorPokemon ASC";
+		try {
+			String query = "SELECT E.idEntrenador, E.nombreEntrenador, E.fechaCreacion, "
+					+ "COUNT(M.idObjeto) AS cantidadObjetos, "
+					+ "(SELECT GROUP_CONCAT(P.nombrePokemon SEPARATOR ' | ') " + "FROM EquipoContienePokemons EC "
+					+ "INNER JOIN Pokemon P ON EC.idPokemon = P.idPokemon "
+					+ "WHERE EC.idEquipo = EQ.idEquipo) AS nombrePokemon, "
+					+ "(SELECT GROUP_CONCAT(MD.nombre SEPARATOR ' | ') " + "FROM Estuche ES "
+					+ "INNER JOIN Medalla MD ON ES.idMedalla = MD.idMedalla "
+					+ "WHERE ES.idEntrenador = E.idEntrenador) AS nombreMedallas, "
+					+ "SUM(P.popularidad) AS popularidadTotal, "
+					+ "(SUM(P.popularidad) / COUNT(DISTINCT ECP.idPokemon)) AS popularidadPromedioPorPokemon "
+					+ "FROM Entrenador E " + "INNER JOIN Equipo EQ ON E.idEntrenador = EQ.idEntrenador "
+					+ "INNER JOIN EquipoContienePokemons ECP ON EQ.idEquipo = ECP.idEquipo "
+					+ "INNER JOIN Pokemon P ON ECP.idPokemon = P.idPokemon "
+					+ "LEFT JOIN Mochila M ON E.idEntrenador = M.idEntrenador "
+					+ "GROUP BY E.idEntrenador, E.nombreEntrenador, E.fechaCreacion, EQ.idEquipo "
+					+ "ORDER BY popularidadPromedioPorPokemon ASC";
 
-	        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-	            ResultSet rs = stmt.executeQuery();
+			try (PreparedStatement stmt = connection.prepareStatement(query)) {
+				ResultSet rs = stmt.executeQuery();
 
-	            if (!rs.next()) {
-	                System.out.println("No hay entrenadores registrados.");
-	                return;
-	            }
+				if (!rs.next()) {
+					System.out.println("No hay entrenadores registrados.");
+					return;
+				}
 
-	            do {
-	                int idEntrenador = rs.getInt("idEntrenador");
-	                String nombreEntrenador = rs.getString("nombreEntrenador");
-	                String fechaCreacion = rs.getString("fechaCreacion");
-	                int cantidadObjetos = rs.getInt("cantidadObjetos");
-	                String nombrePokemon = rs.getString("nombrePokemon");
-	                String nombreMedallas = rs.getString("nombreMedallas");
-	                int popularidadPromedioPorPokemon = rs.getInt("popularidadPromedioPorPokemon");
+				do {
+					int idEntrenador = rs.getInt("idEntrenador");
+					String nombreEntrenador = rs.getString("nombreEntrenador");
+					String fechaCreacion = rs.getString("fechaCreacion");
+					int cantidadObjetos = rs.getInt("cantidadObjetos");
+					String nombrePokemon = rs.getString("nombrePokemon");
+					String nombreMedallas = rs.getString("nombreMedallas");
+					int popularidadPromedioPorPokemon = rs.getInt("popularidadPromedioPorPokemon");
 
-	                fichaEntrenador(idEntrenador, nombreEntrenador, fechaCreacion, cantidadObjetos, nombrePokemon, nombreMedallas);
-	                System.out.println("Popularidad del Equipo: " + popularidadPromedioPorPokemon + "#");
+					fichaEntrenador(idEntrenador, nombreEntrenador, fechaCreacion, cantidadObjetos, nombrePokemon,
+							nombreMedallas);
+					System.out.println("Popularidad del Equipo: " + popularidadPromedioPorPokemon + "#");
 
-	            } while (rs.next());
-	        } catch (SQLException e) {
-	            System.out.println("Error al imprimir los entrenadores por popularidad de equipo: " + e.getMessage());
-	        }
-	    } catch (Exception e) {
-	        System.out.println("Error: " + e.getMessage());
-	    }
+				} while (rs.next());
+			} catch (SQLException e) {
+				System.out.println("Error al imprimir los entrenadores por popularidad de equipo: " + e.getMessage());
+			}
+		} catch (Exception e) {
+			System.out.println("Error: " + e.getMessage());
+		}
 	}
 
-
+	/**
+	 * Imprime la información de los entrenadores ordenados por el peso total de su
+	 * equipo.
+	 */
 
 	public static void imprimirEntrenadoresPorPesoEquipo() {
-	    try {
-	        String query = "SELECT E.idEntrenador, E.nombreEntrenador, E.fechaCreacion, "
-	                + "COUNT(M.idObjeto) AS cantidadObjetos, "
-	                + "(SELECT GROUP_CONCAT(P.nombrePokemon SEPARATOR ' | ') "
-	                + "FROM EquipoContienePokemons EC "
-	                + "INNER JOIN Pokemon P ON EC.idPokemon = P.idPokemon "
-	                + "WHERE EC.idEquipo = EQ.idEquipo) AS nombrePokemon, "
-	                + "(SELECT GROUP_CONCAT(MD.nombre SEPARATOR ' | ') "
-	                + "FROM Estuche ES "
-	                + "INNER JOIN Medalla MD ON ES.idMedalla = MD.idMedalla "
-	                + "WHERE ES.idEntrenador = E.idEntrenador) AS nombreMedallas, "
-	                + "SUM(P.peso) AS pesoTotal "
-	                + "FROM Entrenador E "
-	                + "INNER JOIN Equipo EQ ON E.idEntrenador = EQ.idEntrenador "
-	                + "INNER JOIN EquipoContienePokemons ECP ON EQ.idEquipo = ECP.idEquipo "
-	                + "INNER JOIN Pokemon P ON ECP.idPokemon = P.idPokemon "
-	                + "LEFT JOIN Mochila M ON E.idEntrenador = M.idEntrenador "
-	                + "GROUP BY E.idEntrenador, E.nombreEntrenador, E.fechaCreacion, EQ.idEquipo "
-	                + "ORDER BY pesoTotal DESC";
+		try {
+			String query = "SELECT E.idEntrenador, E.nombreEntrenador, E.fechaCreacion, "
+					+ "COUNT(M.idObjeto) AS cantidadObjetos, "
+					+ "(SELECT GROUP_CONCAT(P.nombrePokemon SEPARATOR ' | ') " + "FROM EquipoContienePokemons EC "
+					+ "INNER JOIN Pokemon P ON EC.idPokemon = P.idPokemon "
+					+ "WHERE EC.idEquipo = EQ.idEquipo) AS nombrePokemon, "
+					+ "(SELECT GROUP_CONCAT(MD.nombre SEPARATOR ' | ') " + "FROM Estuche ES "
+					+ "INNER JOIN Medalla MD ON ES.idMedalla = MD.idMedalla "
+					+ "WHERE ES.idEntrenador = E.idEntrenador) AS nombreMedallas, " + "SUM(P.peso) AS pesoTotal "
+					+ "FROM Entrenador E " + "INNER JOIN Equipo EQ ON E.idEntrenador = EQ.idEntrenador "
+					+ "INNER JOIN EquipoContienePokemons ECP ON EQ.idEquipo = ECP.idEquipo "
+					+ "INNER JOIN Pokemon P ON ECP.idPokemon = P.idPokemon "
+					+ "LEFT JOIN Mochila M ON E.idEntrenador = M.idEntrenador "
+					+ "GROUP BY E.idEntrenador, E.nombreEntrenador, E.fechaCreacion, EQ.idEquipo "
+					+ "ORDER BY pesoTotal DESC";
 
-	        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-	            ResultSet rs = stmt.executeQuery();
+			try (PreparedStatement stmt = connection.prepareStatement(query)) {
+				ResultSet rs = stmt.executeQuery();
 
-	            if (!rs.next()) {
-	                System.out.println("No hay entrenadores registrados.");
-	                return;
-	            }
+				if (!rs.next()) {
+					System.out.println("No hay entrenadores registrados.");
+					return;
+				}
 
-	            do {
-	                int idEntrenador = rs.getInt("idEntrenador");
-	                String nombreEntrenador = rs.getString("nombreEntrenador");
-	                String fechaCreacion = rs.getString("fechaCreacion");
-	                int cantidadObjetos = rs.getInt("cantidadObjetos");
-	                String nombrePokemon = rs.getString("nombrePokemon");
-	                String nombreMedallas = rs.getString("nombreMedallas");
-	                double pesoTotal = rs.getDouble("pesoTotal");
+				do {
+					int idEntrenador = rs.getInt("idEntrenador");
+					String nombreEntrenador = rs.getString("nombreEntrenador");
+					String fechaCreacion = rs.getString("fechaCreacion");
+					int cantidadObjetos = rs.getInt("cantidadObjetos");
+					String nombrePokemon = rs.getString("nombrePokemon");
+					String nombreMedallas = rs.getString("nombreMedallas");
+					double pesoTotal = rs.getDouble("pesoTotal");
 
-	                fichaEntrenador(idEntrenador, nombreEntrenador, fechaCreacion, cantidadObjetos, nombrePokemon, nombreMedallas);
-	                System.out.println("Peso del Equipo: " + pesoTotal + "kg");
+					fichaEntrenador(idEntrenador, nombreEntrenador, fechaCreacion, cantidadObjetos, nombrePokemon,
+							nombreMedallas);
+					System.out.println("Peso del Equipo: " + pesoTotal + "kg");
 
-	            } while (rs.next());
-	        } catch (SQLException e) {
-	            System.out.println("Error al imprimir los entrenadores por popularidad de equipo: " + e.getMessage());
-	        }
-	    } catch (Exception e) {
-	        System.out.println("Error: " + e.getMessage());
-	    }
+				} while (rs.next());
+			} catch (SQLException e) {
+				System.out.println("Error al imprimir los entrenadores por popularidad de equipo: " + e.getMessage());
+			}
+		} catch (Exception e) {
+			System.out.println("Error: " + e.getMessage());
+		}
 	}
-	
+
+	/**
+	 * Imprime la información de los entrenadores ordenados por la altura total de
+	 * su equipo.
+	 */
+
 	public static void imprimirEntrenadoresPorAlturaEquipo() {
-	    try {
-	        String query = "SELECT E.idEntrenador, E.nombreEntrenador, E.fechaCreacion, "
-	                + "COUNT(M.idObjeto) AS cantidadObjetos, "
-	                + "(SELECT GROUP_CONCAT(P.nombrePokemon SEPARATOR ' | ') "
-	                + "FROM EquipoContienePokemons EC "
-	                + "INNER JOIN Pokemon P ON EC.idPokemon = P.idPokemon "
-	                + "WHERE EC.idEquipo = EQ.idEquipo) AS nombrePokemon, "
-	                + "(SELECT GROUP_CONCAT(MD.nombre SEPARATOR ' | ') "
-	                + "FROM Estuche ES "
-	                + "INNER JOIN Medalla MD ON ES.idMedalla = MD.idMedalla "
-	                + "WHERE ES.idEntrenador = E.idEntrenador) AS nombreMedallas, "
-	                + "SUM(P.altura) AS alturaTotal "
-	                + "FROM Entrenador E "
-	                + "INNER JOIN Equipo EQ ON E.idEntrenador = EQ.idEntrenador "
-	                + "INNER JOIN EquipoContienePokemons ECP ON EQ.idEquipo = ECP.idEquipo "
-	                + "INNER JOIN Pokemon P ON ECP.idPokemon = P.idPokemon "
-	                + "LEFT JOIN Mochila M ON E.idEntrenador = M.idEntrenador "
-	                + "GROUP BY E.idEntrenador, E.nombreEntrenador, E.fechaCreacion, EQ.idEquipo "
-	                + "ORDER BY alturaTotal DESC";
+		try {
+			String query = "SELECT E.idEntrenador, E.nombreEntrenador, E.fechaCreacion, "
+					+ "COUNT(M.idObjeto) AS cantidadObjetos, "
+					+ "(SELECT GROUP_CONCAT(P.nombrePokemon SEPARATOR ' | ') " + "FROM EquipoContienePokemons EC "
+					+ "INNER JOIN Pokemon P ON EC.idPokemon = P.idPokemon "
+					+ "WHERE EC.idEquipo = EQ.idEquipo) AS nombrePokemon, "
+					+ "(SELECT GROUP_CONCAT(MD.nombre SEPARATOR ' | ') " + "FROM Estuche ES "
+					+ "INNER JOIN Medalla MD ON ES.idMedalla = MD.idMedalla "
+					+ "WHERE ES.idEntrenador = E.idEntrenador) AS nombreMedallas, " + "SUM(P.altura) AS alturaTotal "
+					+ "FROM Entrenador E " + "INNER JOIN Equipo EQ ON E.idEntrenador = EQ.idEntrenador "
+					+ "INNER JOIN EquipoContienePokemons ECP ON EQ.idEquipo = ECP.idEquipo "
+					+ "INNER JOIN Pokemon P ON ECP.idPokemon = P.idPokemon "
+					+ "LEFT JOIN Mochila M ON E.idEntrenador = M.idEntrenador "
+					+ "GROUP BY E.idEntrenador, E.nombreEntrenador, E.fechaCreacion, EQ.idEquipo "
+					+ "ORDER BY alturaTotal DESC";
 
-	        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-	            ResultSet rs = stmt.executeQuery();
+			try (PreparedStatement stmt = connection.prepareStatement(query)) {
+				ResultSet rs = stmt.executeQuery();
 
-	            if (!rs.next()) {
-	                System.out.println("No hay entrenadores registrados.");
-	                return;
-	            }
+				if (!rs.next()) {
+					System.out.println("No hay entrenadores registrados.");
+					return;
+				}
 
-	            do {
-	                int idEntrenador = rs.getInt("idEntrenador");
-	                String nombreEntrenador = rs.getString("nombreEntrenador");
-	                String fechaCreacion = rs.getString("fechaCreacion");
-	                int cantidadObjetos = rs.getInt("cantidadObjetos");
-	                String nombrePokemon = rs.getString("nombrePokemon");
-	                String nombreMedallas = rs.getString("nombreMedallas");
-	                double alturaTotal = rs.getDouble("alturaTotal");
+				do {
+					int idEntrenador = rs.getInt("idEntrenador");
+					String nombreEntrenador = rs.getString("nombreEntrenador");
+					String fechaCreacion = rs.getString("fechaCreacion");
+					int cantidadObjetos = rs.getInt("cantidadObjetos");
+					String nombrePokemon = rs.getString("nombrePokemon");
+					String nombreMedallas = rs.getString("nombreMedallas");
+					double alturaTotal = rs.getDouble("alturaTotal");
 
-	                fichaEntrenador(idEntrenador, nombreEntrenador, fechaCreacion, cantidadObjetos, nombrePokemon, nombreMedallas);
-	                System.out.println("Altura del Equipo: " + alturaTotal + "m");
+					fichaEntrenador(idEntrenador, nombreEntrenador, fechaCreacion, cantidadObjetos, nombrePokemon,
+							nombreMedallas);
+					System.out.println("Altura del Equipo: " + alturaTotal + "m");
 
-	            } while (rs.next());
-	        } catch (SQLException e) {
-	            System.out.println("Error al imprimir los entrenadores por popularidad de equipo: " + e.getMessage());
-	        }
-	    } catch (Exception e) {
-	        System.out.println("Error: " + e.getMessage());
-	    }
+				} while (rs.next());
+			} catch (SQLException e) {
+				System.out.println("Error al imprimir los entrenadores por popularidad de equipo: " + e.getMessage());
+			}
+		} catch (Exception e) {
+			System.out.println("Error: " + e.getMessage());
+		}
 	}
+
+	/**
+	 * Imprime la información de los entrenadores ordenados por la cantidad de
+	 * objetos en su mochila.
+	 */
 
 	public static void imprimirEntrenadoresPorCantidadObjetos() {
-	    try {
-	        String query = "SELECT E.idEntrenador, E.nombreEntrenador, E.fechaCreacion, " +
-	                "COUNT(M.idObjeto) AS cantidadObjetos, " +
-	                "(SELECT GROUP_CONCAT(P.nombrePokemon SEPARATOR ' | ') " +
-	                "FROM EquipoContienePokemons EC " +
-	                "INNER JOIN Pokemon P ON EC.idPokemon = P.idPokemon " +
-	                "INNER JOIN Equipo EQ ON EC.idEquipo = EQ.idEquipo " +
-	                "WHERE EQ.idEntrenador = E.idEntrenador) AS nombrePokemon, " +
-	                "(SELECT GROUP_CONCAT(MD.nombre SEPARATOR ' | ') " +
-	                "FROM Estuche ES " +
-	                "INNER JOIN Medalla MD ON ES.idMedalla = MD.idMedalla " +
-	                "WHERE ES.idEntrenador = E.idEntrenador) AS nombreMedallas " +
-	                "FROM Entrenador E " +
-	                "LEFT JOIN Mochila M ON E.idEntrenador = M.idEntrenador " +
-	                "GROUP BY E.idEntrenador, E.nombreEntrenador, E.fechaCreacion " +
-	                "ORDER BY cantidadObjetos DESC";
+		try {
+			String query = "SELECT E.idEntrenador, E.nombreEntrenador, E.fechaCreacion, "
+					+ "COUNT(M.idObjeto) AS cantidadObjetos, "
+					+ "(SELECT GROUP_CONCAT(P.nombrePokemon SEPARATOR ' | ') " + "FROM EquipoContienePokemons EC "
+					+ "INNER JOIN Pokemon P ON EC.idPokemon = P.idPokemon "
+					+ "INNER JOIN Equipo EQ ON EC.idEquipo = EQ.idEquipo "
+					+ "WHERE EQ.idEntrenador = E.idEntrenador) AS nombrePokemon, "
+					+ "(SELECT GROUP_CONCAT(MD.nombre SEPARATOR ' | ') " + "FROM Estuche ES "
+					+ "INNER JOIN Medalla MD ON ES.idMedalla = MD.idMedalla "
+					+ "WHERE ES.idEntrenador = E.idEntrenador) AS nombreMedallas " + "FROM Entrenador E "
+					+ "LEFT JOIN Mochila M ON E.idEntrenador = M.idEntrenador "
+					+ "GROUP BY E.idEntrenador, E.nombreEntrenador, E.fechaCreacion " + "ORDER BY cantidadObjetos DESC";
 
-	        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-	            ResultSet rs = stmt.executeQuery();
+			try (PreparedStatement stmt = connection.prepareStatement(query)) {
+				ResultSet rs = stmt.executeQuery();
 
-	            if (!rs.next()) {
-	                System.out.println("No hay entrenadores registrados.");
-	                return;
-	            }
+				if (!rs.next()) {
+					System.out.println("No hay entrenadores registrados.");
+					return;
+				}
 
-	            do {
-	                int idEntrenador = rs.getInt("idEntrenador");
-	                String nombreEntrenador = rs.getString("nombreEntrenador");
-	                String fechaCreacion = rs.getString("fechaCreacion");
-	                int cantidadObjetos = rs.getInt("cantidadObjetos");
-	                String nombrePokemon = rs.getString("nombrePokemon");
-	                String nombreMedallas = rs.getString("nombreMedallas");
+				do {
+					int idEntrenador = rs.getInt("idEntrenador");
+					String nombreEntrenador = rs.getString("nombreEntrenador");
+					String fechaCreacion = rs.getString("fechaCreacion");
+					int cantidadObjetos = rs.getInt("cantidadObjetos");
+					String nombrePokemon = rs.getString("nombrePokemon");
+					String nombreMedallas = rs.getString("nombreMedallas");
 
-	                fichaEntrenador(idEntrenador, nombreEntrenador, fechaCreacion, cantidadObjetos, nombrePokemon, nombreMedallas);
+					fichaEntrenador(idEntrenador, nombreEntrenador, fechaCreacion, cantidadObjetos, nombrePokemon,
+							nombreMedallas);
 
-	            } while (rs.next());
-	        } catch (SQLException e) {
-	            System.out.println("Error al imprimir los entrenadores por cantidad de objetos: " + e.getMessage());
-	        }
-	    } catch (Exception e) {
-	        System.out.println("Error: " + e.getMessage());
-	    }
+				} while (rs.next());
+			} catch (SQLException e) {
+				System.out.println("Error al imprimir los entrenadores por cantidad de objetos: " + e.getMessage());
+			}
+		} catch (Exception e) {
+			System.out.println("Error: " + e.getMessage());
+		}
 	}
 
+	/**
+	 * Imprime la información de los entrenadores ordenados por la cantidad de
+	 * medallas obtenidas.
+	 */
 
 	public static void imprimirEntrenadoresPorCantidadMedallas() {
-	    try {
-	        String query = "SELECT E.idEntrenador, E.nombreEntrenador, E.fechaCreacion, " +
-	                "(SELECT COUNT(*) FROM Estuche ES WHERE ES.idEntrenador = E.idEntrenador) AS cantidadMedallas, " +
-	                "(SELECT GROUP_CONCAT(P.nombrePokemon SEPARATOR ' | ') " +
-	                "FROM EquipoContienePokemons EC " +
-	                "INNER JOIN Pokemon P ON EC.idPokemon = P.idPokemon " +
-	                "INNER JOIN Equipo EQ ON EC.idEquipo = EQ.idEquipo " +
-	                "WHERE EQ.idEntrenador = E.idEntrenador) AS nombrePokemon, " +
-	                "(SELECT GROUP_CONCAT(MD.nombre SEPARATOR ' | ') " +
-	                "FROM Estuche ES " +
-	                "INNER JOIN Medalla MD ON ES.idMedalla = MD.idMedalla " +
-	                "WHERE ES.idEntrenador = E.idEntrenador) AS nombreMedallas " +
-	                "FROM Entrenador E " +
-	                "GROUP BY E.idEntrenador, E.nombreEntrenador, E.fechaCreacion " +
-	                "ORDER BY cantidadMedallas DESC";
+		try {
+			String query = "SELECT E.idEntrenador, E.nombreEntrenador, E.fechaCreacion, "
+					+ "(SELECT COUNT(*) FROM Estuche ES WHERE ES.idEntrenador = E.idEntrenador) AS cantidadMedallas, "
+					+ "(SELECT GROUP_CONCAT(P.nombrePokemon SEPARATOR ' | ') " + "FROM EquipoContienePokemons EC "
+					+ "INNER JOIN Pokemon P ON EC.idPokemon = P.idPokemon "
+					+ "INNER JOIN Equipo EQ ON EC.idEquipo = EQ.idEquipo "
+					+ "WHERE EQ.idEntrenador = E.idEntrenador) AS nombrePokemon, "
+					+ "(SELECT GROUP_CONCAT(MD.nombre SEPARATOR ' | ') " + "FROM Estuche ES "
+					+ "INNER JOIN Medalla MD ON ES.idMedalla = MD.idMedalla "
+					+ "WHERE ES.idEntrenador = E.idEntrenador) AS nombreMedallas " + "FROM Entrenador E "
+					+ "GROUP BY E.idEntrenador, E.nombreEntrenador, E.fechaCreacion "
+					+ "ORDER BY cantidadMedallas DESC";
 
-	        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-	            ResultSet rs = stmt.executeQuery();
+			try (PreparedStatement stmt = connection.prepareStatement(query)) {
+				ResultSet rs = stmt.executeQuery();
 
-	            if (!rs.next()) {
-	                System.out.println("No hay entrenadores registrados.");
-	                return;
-	            }
+				if (!rs.next()) {
+					System.out.println("No hay entrenadores registrados.");
+					return;
+				}
 
-	            do {
-	                int idEntrenador = rs.getInt("idEntrenador");
-	                String nombreEntrenador = rs.getString("nombreEntrenador");
-	                String fechaCreacion = rs.getString("fechaCreacion");
-	                int cantidadMedallas = rs.getInt("cantidadMedallas");
-	                String nombrePokemon = rs.getString("nombrePokemon");
-	                String nombreMedallas = rs.getString("nombreMedallas");
+				do {
+					int idEntrenador = rs.getInt("idEntrenador");
+					String nombreEntrenador = rs.getString("nombreEntrenador");
+					String fechaCreacion = rs.getString("fechaCreacion");
+					int cantidadMedallas = rs.getInt("cantidadMedallas");
+					String nombrePokemon = rs.getString("nombrePokemon");
+					String nombreMedallas = rs.getString("nombreMedallas");
 
-	                fichaEntrenador(idEntrenador, nombreEntrenador, fechaCreacion, cantidadMedallas, nombrePokemon, nombreMedallas);
+					fichaEntrenador(idEntrenador, nombreEntrenador, fechaCreacion, cantidadMedallas, nombrePokemon,
+							nombreMedallas);
 
-	            } while (rs.next());
-	        } catch (SQLException e) {
-	            System.out.println("Error al imprimir los entrenadores por cantidad de medallas: " + e.getMessage());
-	        }
-	    } catch (Exception e) {
-	        System.out.println("Error: " + e.getMessage());
-	    }
+				} while (rs.next());
+			} catch (SQLException e) {
+				System.out.println("Error al imprimir los entrenadores por cantidad de medallas: " + e.getMessage());
+			}
+		} catch (Exception e) {
+			System.out.println("Error: " + e.getMessage());
+		}
 	}
-	
+
+	/**
+	 * Imprime la ficha de un entrenador con la información proporcionada.
+	 *
+	 * @param idEntrenador     ID del entrenador.
+	 * @param nombreEntrenador Nombre del entrenador.
+	 * @param fechaCreacion    Fecha de creación del entrenador.
+	 * @param cantidadObjetos  Cantidad de objetos en la mochila del entrenador.
+	 * @param nombrePokemon    Nombres de los Pokémon en el equipo del entrenador.
+	 * @param nombreMedalla    Nombres de las medallas obtenidas por el entrenador.
+	 */
+
 	private static void fichaEntrenador(int idEntrenador, String nombreEntrenador, String fechaCreacion,
 			int cantidadObjetos, String nombrePokemon, String nombreMedalla) {
 
-		System.out.println("\n==" + AMARILLO + " FICHA ENTRENADOR " + RESET + "============= Nº ID/"
-				+ idEntrenador + " ==\n" + "\n• NOMBRE / " + nombreEntrenador + "\n"
-				+ "--------------------------------------\n" + "• MOCHILA:\t" + cantidadObjetos + " objetos\n" + "• FECHA:\t"
-				+ fechaCreacion + "\n" + "• EQUIPO:\n  " + (nombrePokemon != null ? nombrePokemon : "") + "\n"
-				+ "• MEDALLAS:\n  " + (nombreMedalla != null ? nombreMedalla : "")
-				+ "\n============================================");
+		System.out.println("\n==" + AMARILLO + " FICHA ENTRENADOR " + RESET + "============= Nº ID/" + idEntrenador
+				+ " ==\n" + "\n• NOMBRE / " + nombreEntrenador + "\n" + "--------------------------------------\n"
+				+ "• MOCHILA:\t" + cantidadObjetos + " objetos\n" + "• FECHA:\t" + fechaCreacion + "\n"
+				+ "• EQUIPO:\n  " + (nombrePokemon != null ? nombrePokemon : "") + "\n" + "• MEDALLAS:\n  "
+				+ (nombreMedalla != null ? nombreMedalla : "") + "\n============================================");
 
 	}
 

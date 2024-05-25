@@ -10,6 +10,10 @@ public class GestionEntrenadores extends Gestion {
     static int idEntrenador;
 
     public static void aniadirEntrenador(Entrenador entrenador) {
+        if (entrenador == null || entrenador.getNombreEntrenador() == null || entrenador.getNombreEntrenador().isEmpty()) {
+            throw new IllegalArgumentException("El nombre del entrenador no puede estar vacío");
+        }
+        
         String query = "{CALL aniadirEntrenador(?)}";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -20,6 +24,7 @@ public class GestionEntrenadores extends Gestion {
             System.out.println("Error al añadir entrenador: " + e.getMessage());
         }
     }
+
 
     public static void eliminarEntrenadorPorID() {
         try {

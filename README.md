@@ -50,7 +50,7 @@ Realizar un programa que permita la gestión de entrenadores pokémon y de sus e
 
 ## Pruebas Unitarias
 
-### 1. GestionEntrenadoresTest.java
+### 1. AniadirEntrenadorTest.java
 
 |          Entrada          |          Valor Esperado          |
 |---------------------------|----------------------------------|

@@ -43,6 +43,7 @@ public class Gestion {
 	 * @return Conexxión a la base de datos
 	 */
 	
+	@SuppressWarnings("exports")
 	public static Connection getConnection() {
 		return connection;
 	}
@@ -53,6 +54,7 @@ public class Gestion {
 	 * @param connection Conexión a la base de datos
 	 */
 	
+	@SuppressWarnings("exports")
 	public static void setConnection(Connection connection) {
 		Gestion.connection = connection;
 	}

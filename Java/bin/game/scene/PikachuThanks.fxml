@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="228.0" prefWidth="738.0" style="-fx-background-color: WHITE;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <ImageView fitHeight="193.0" fitWidth="208.0" layoutX="25.0" layoutY="18.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@img/pikachuthanks.png" />
+         </image>
+      </ImageView>
+      <Text layoutX="256.0" layoutY="127.0" strokeType="OUTSIDE" strokeWidth="0.0" text="GRACIAS POR JUGAR!">
+         <font>
+            <Font name="G.B.BOOT" size="46.0" />
+         </font>
+      </Text>
+   </children>
+</AnchorPane>

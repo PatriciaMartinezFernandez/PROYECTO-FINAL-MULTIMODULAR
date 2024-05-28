@@ -1,30 +1,51 @@
 package game;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Scanner;
 
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 
 /**
  * Esta clase representa la aplicación principal del juego Pokémon Trainers.
  * Permite a los usuarios interactuar con diferentes funcionalidades del juego
- * como la gestión de entrenadores, equipos, objetos y gimnasios, además de
- * una pokédex funcional con todos los datos de los primeros 151 pokémons 
+ * como la gestión de entrenadores, equipos, objetos y gimnasios, además de una
+ * pokédex funcional con todos los datos de los primeros 151 pokémons
  * pertenecientes a la primera generación.
  * 
  * @author Jaime Martínez Fernández
  */
 
-public class App {
+public class App extends Application {
 
 	static Scanner sc = new Scanner(System.in);
 
 	/**
 	 * Método principal que inicia la aplicación.
 	 * 
-	 * @param args
+	 * @param primaryStage El escenario principal de la aplicación.
+	 * @throws Exception Si ocurre un error durante la ejecución.
 	 */
-	
+
+	@SuppressWarnings("exports")
+	@Override
+	public void start(Stage primaryStage) throws Exception {
+		mostrarVentanaPrincipal();
+	}
+
 	public static void main(String[] args) {
+		launch(args);
+	}
+
+	/**
+	 * Muestra la ventana principal del juego.
+	 */
+
+	private static void mostrarVentanaPrincipal() {
 
 		// Variables
 		String opcion = "";
@@ -229,7 +250,28 @@ public class App {
 		} while (!opcion.equalsIgnoreCase("x"));
 
 		System.out.println("Saliendo...");
-		
+		mostrarVentanaDespedida();
+	}
+
+	/**
+	 * Muestra una ventana emergente de despedida al cerrar la aplicación.
+	 */
+
+	private static void mostrarVentanaDespedida() {
+		try {
+			FXMLLoader loader = new FXMLLoader(App.class.getResource("/game/scene/PikachuThanks.fxml"));
+			Parent root = loader.load();
+
+			Scene scene = new Scene(root);
+
+			Stage stage = new Stage();
+			stage.setScene(scene);
+
+			stage.showAndWait();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 		try {
 			Gestion.connection.close();
 		} catch (SQLException e) {

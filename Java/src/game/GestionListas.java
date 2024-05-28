@@ -127,19 +127,24 @@ public class GestionListas extends Gestion {
 	public static void imprimirEntrenadorNumPokemon() {
 		try {
 			String query = "SELECT E.idEntrenador, E.nombreEntrenador, E.fechaCreacion, "
-					+ "COUNT(P.idPokemon) AS cantidadPokemon, " + "COUNT(M.idObjeto) AS cantidadObjetos, "
-					+ "(SELECT GROUP_CONCAT(P.nombrePokemon SEPARATOR ' | ') " + "FROM EquipoContienePokemons EC "
-					+ "INNER JOIN Pokemon P ON EC.idPokemon = P.idPokemon "
-					+ "INNER JOIN Equipo EQ ON EC.idEquipo = EQ.idEquipo "
-					+ "WHERE EQ.idEntrenador = E.idEntrenador) AS nombrePokemon, "
-					+ "(SELECT GROUP_CONCAT(MD.nombre SEPARATOR ' | ') " + "FROM Estuche ES "
-					+ "INNER JOIN Medalla MD ON ES.idMedalla = MD.idMedalla "
-					+ "WHERE ES.idEntrenador = E.idEntrenador) AS nombreMedallas " + "FROM Entrenador E "
-					+ "LEFT JOIN Mochila M ON E.idEntrenador = M.idEntrenador "
-					+ "LEFT JOIN Equipo EQ ON E.idEntrenador = EQ.idEntrenador "
-					+ "LEFT JOIN EquipoContienePokemons ECP ON EQ.idEquipo = ECP.idEquipo "
-					+ "LEFT JOIN Pokemon P ON ECP.idPokemon = P.idPokemon " + "GROUP BY E.idEntrenador "
-					+ "ORDER BY cantidadPokemon DESC";
+		             + "COUNT(DISTINCT P.idPokemon) AS cantidadPokemon, "
+		             + "COUNT(DISTINCT M.idObjeto) AS cantidadObjetos, "
+		             + "(SELECT GROUP_CONCAT(DISTINCT P.nombrePokemon SEPARATOR ' | ') "
+		             + "FROM EquipoContienePokemons EC "
+		             + "INNER JOIN Pokemon P ON EC.idPokemon = P.idPokemon "
+		             + "INNER JOIN Equipo EQ ON EC.idEquipo = EQ.idEquipo "
+		             + "WHERE EQ.idEntrenador = E.idEntrenador) AS nombrePokemon, "
+		             + "(SELECT GROUP_CONCAT(DISTINCT MD.nombre SEPARATOR ' | ') "
+		             + "FROM Estuche ES "
+		             + "INNER JOIN Medalla MD ON ES.idMedalla = MD.idMedalla "
+		             + "WHERE ES.idEntrenador = E.idEntrenador) AS nombreMedallas "
+		             + "FROM Entrenador E "
+		             + "LEFT JOIN Equipo EQ ON E.idEntrenador = EQ.idEntrenador "
+		             + "LEFT JOIN EquipoContienePokemons ECP ON EQ.idEquipo = ECP.idEquipo "
+		             + "LEFT JOIN Pokemon P ON ECP.idPokemon = P.idPokemon "
+		             + "LEFT JOIN Mochila M ON E.idEntrenador = M.idEntrenador "
+		             + "GROUP BY E.idEntrenador, E.nombreEntrenador, E.fechaCreacion "
+		             + "ORDER BY cantidadPokemon DESC;";
 
 			try (PreparedStatement stmt = connection.prepareStatement(query)) {
 				ResultSet rs = stmt.executeQuery();
@@ -297,19 +302,23 @@ public class GestionListas extends Gestion {
 	public static void imprimirEntrenadoresPorPesoEquipo() {
 		try {
 			String query = "SELECT E.idEntrenador, E.nombreEntrenador, E.fechaCreacion, "
-					+ "COUNT(M.idObjeto) AS cantidadObjetos, "
-					+ "(SELECT GROUP_CONCAT(P.nombrePokemon SEPARATOR ' | ') " + "FROM EquipoContienePokemons EC "
-					+ "INNER JOIN Pokemon P ON EC.idPokemon = P.idPokemon "
-					+ "WHERE EC.idEquipo = EQ.idEquipo) AS nombrePokemon, "
-					+ "(SELECT GROUP_CONCAT(MD.nombre SEPARATOR ' | ') " + "FROM Estuche ES "
-					+ "INNER JOIN Medalla MD ON ES.idMedalla = MD.idMedalla "
-					+ "WHERE ES.idEntrenador = E.idEntrenador) AS nombreMedallas, " + "SUM(P.peso) AS pesoTotal "
-					+ "FROM Entrenador E " + "INNER JOIN Equipo EQ ON E.idEntrenador = EQ.idEntrenador "
-					+ "INNER JOIN EquipoContienePokemons ECP ON EQ.idEquipo = ECP.idEquipo "
-					+ "INNER JOIN Pokemon P ON ECP.idPokemon = P.idPokemon "
-					+ "LEFT JOIN Mochila M ON E.idEntrenador = M.idEntrenador "
-					+ "GROUP BY E.idEntrenador, E.nombreEntrenador, E.fechaCreacion, EQ.idEquipo "
-					+ "ORDER BY pesoTotal DESC";
+		             + "COALESCE(COUNT(DISTINCT M.idObjeto), 0) AS cantidadObjetos, "
+		             + "(SELECT GROUP_CONCAT(P.nombrePokemon SEPARATOR ' | ') "
+		             + " FROM EquipoContienePokemons EC "
+		             + " INNER JOIN Pokemon P ON EC.idPokemon = P.idPokemon "
+		             + " WHERE EC.idEquipo IN (SELECT EQ.idEquipo FROM Equipo EQ WHERE EQ.idEntrenador = E.idEntrenador)) AS nombrePokemon, "
+		             + "(SELECT GROUP_CONCAT(MD.nombre SEPARATOR ' | ') "
+		             + " FROM Estuche ES "
+		             + " INNER JOIN Medalla MD ON ES.idMedalla = MD.idMedalla "
+		             + " WHERE ES.idEntrenador = E.idEntrenador) AS nombreMedallas, "
+		             + "(SELECT SUM(P2.peso) "
+		             + " FROM EquipoContienePokemons EC2 "
+		             + " INNER JOIN Pokemon P2 ON EC2.idPokemon = P2.idPokemon "
+		             + " WHERE EC2.idEquipo IN (SELECT EQ2.idEquipo FROM Equipo EQ2 WHERE EQ2.idEntrenador = E.idEntrenador)) AS pesoTotal "
+		             + "FROM Entrenador E "
+		             + "LEFT JOIN Mochila M ON E.idEntrenador = M.idEntrenador "
+		             + "GROUP BY E.idEntrenador, E.nombreEntrenador, E.fechaCreacion "
+		             + "ORDER BY pesoTotal DESC;";
 
 			try (PreparedStatement stmt = connection.prepareStatement(query)) {
 				ResultSet rs = stmt.executeQuery();
@@ -349,19 +358,23 @@ public class GestionListas extends Gestion {
 	public static void imprimirEntrenadoresPorAlturaEquipo() {
 		try {
 			String query = "SELECT E.idEntrenador, E.nombreEntrenador, E.fechaCreacion, "
-					+ "COUNT(M.idObjeto) AS cantidadObjetos, "
-					+ "(SELECT GROUP_CONCAT(P.nombrePokemon SEPARATOR ' | ') " + "FROM EquipoContienePokemons EC "
-					+ "INNER JOIN Pokemon P ON EC.idPokemon = P.idPokemon "
-					+ "WHERE EC.idEquipo = EQ.idEquipo) AS nombrePokemon, "
-					+ "(SELECT GROUP_CONCAT(MD.nombre SEPARATOR ' | ') " + "FROM Estuche ES "
-					+ "INNER JOIN Medalla MD ON ES.idMedalla = MD.idMedalla "
-					+ "WHERE ES.idEntrenador = E.idEntrenador) AS nombreMedallas, " + "SUM(P.altura) AS alturaTotal "
-					+ "FROM Entrenador E " + "INNER JOIN Equipo EQ ON E.idEntrenador = EQ.idEntrenador "
-					+ "INNER JOIN EquipoContienePokemons ECP ON EQ.idEquipo = ECP.idEquipo "
-					+ "INNER JOIN Pokemon P ON ECP.idPokemon = P.idPokemon "
-					+ "LEFT JOIN Mochila M ON E.idEntrenador = M.idEntrenador "
-					+ "GROUP BY E.idEntrenador, E.nombreEntrenador, E.fechaCreacion, EQ.idEquipo "
-					+ "ORDER BY alturaTotal DESC";
+		             + "COALESCE(COUNT(DISTINCT M.idObjeto), 0) AS cantidadObjetos, "
+		             + "(SELECT GROUP_CONCAT(P.nombrePokemon SEPARATOR ' | ') "
+		             + " FROM EquipoContienePokemons EC "
+		             + " INNER JOIN Pokemon P ON EC.idPokemon = P.idPokemon "
+		             + " WHERE EC.idEquipo IN (SELECT EQ.idEquipo FROM Equipo EQ WHERE EQ.idEntrenador = E.idEntrenador)) AS nombrePokemon, "
+		             + "(SELECT GROUP_CONCAT(MD.nombre SEPARATOR ' | ') "
+		             + " FROM Estuche ES "
+		             + " INNER JOIN Medalla MD ON ES.idMedalla = MD.idMedalla "
+		             + " WHERE ES.idEntrenador = E.idEntrenador) AS nombreMedallas, "
+		             + "(SELECT SUM(P2.altura) "
+		             + " FROM EquipoContienePokemons EC2 "
+		             + " INNER JOIN Pokemon P2 ON EC2.idPokemon = P2.idPokemon "
+		             + " WHERE EC2.idEquipo IN (SELECT EQ2.idEquipo FROM Equipo EQ2 WHERE EQ2.idEntrenador = E.idEntrenador)) AS alturaTotal "
+		             + "FROM Entrenador E "
+		             + "LEFT JOIN Mochila M ON E.idEntrenador = M.idEntrenador "
+		             + "GROUP BY E.idEntrenador, E.nombreEntrenador, E.fechaCreacion "
+		             + "ORDER BY alturaTotal DESC;";
 
 			try (PreparedStatement stmt = connection.prepareStatement(query)) {
 				ResultSet rs = stmt.executeQuery();
